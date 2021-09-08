@@ -1,0 +1,96 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ */
+
+package com.microsoft.azure.toolkit.lib.compute.vm;
+
+import com.azure.resourcemanager.compute.models.AvailabilitySet;
+import com.azure.resourcemanager.compute.models.KnownLinuxVirtualMachineImage;
+import com.azure.resourcemanager.compute.models.KnownWindowsVirtualMachineImage;
+import com.azure.resourcemanager.compute.models.VirtualMachines;
+import com.microsoft.azure.toolkit.lib.common.model.Region;
+import com.microsoft.azure.toolkit.lib.common.model.Subscription;
+import com.microsoft.azure.toolkit.lib.compute.AbstractAzureResourceModule;
+import com.microsoft.azure.toolkit.lib.compute.ComputeManagerFactory;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class AzureVirtualMachine extends AbstractAzureResourceModule<VirtualMachine> {
+
+    private static final List<AzureImage> linuxImages =
+            Arrays.stream(KnownLinuxVirtualMachineImage.values()).map(AzureImage::new).collect(Collectors.toList());
+    private static final List<AzureImage> windowsImages =
+            Arrays.stream(KnownWindowsVirtualMachineImage.values()).map(AzureImage::new).collect(Collectors.toList());
+    private static final List<AzureImage> images =
+            Collections.unmodifiableList(Stream.of(linuxImages, windowsImages).flatMap(List::stream).collect(Collectors.toList()));
+
+    public AzureVirtualMachine() { // for SPI
+        super(AzureVirtualMachine::new);
+    }
+
+    private AzureVirtualMachine(@Nonnull final List<Subscription> subscriptions) {
+        super(AzureVirtualMachine::new, subscriptions);
+    }
+
+    public List<VirtualMachine> list(@Nonnull final String subscriptionId) {
+        final VirtualMachines virtualMachines = getVirtualMachinesManager(subscriptionId);
+        return virtualMachines.list().stream()
+                .map(vm -> new VirtualMachine(vm, this)).collect(Collectors.toList());
+    }
+
+    @Nonnull
+    public VirtualMachine get(@Nonnull final String subscriptionId, @Nonnull final String resourceGroup, @Nonnull final String name) {
+        final VirtualMachines virtualMachinesManager = getVirtualMachinesManager(subscriptionId);
+        return new VirtualMachine(virtualMachinesManager.getByResourceGroup(resourceGroup, name), this);
+    }
+
+    public List<String> availabilitySets() {
+        return availabilitySets(getDefaultSubscription().getId());
+    }
+
+    public List<String> availabilitySets(@Nonnull final String subscriptionId) {
+        return ComputeManagerFactory.create(subscriptionId).availabilitySets().list().stream().map(AvailabilitySet::name).collect(Collectors.toList());
+    }
+
+    public List<AzureImagePublisher> publishers(final Region region) {
+        return publishers(getDefaultSubscription().getId(), region);
+    }
+
+    public List<AzureImagePublisher> publishers(final String subscriptionId, final Region region) {
+        return getVirtualMachinesManager(subscriptionId).manager().virtualMachineImages()
+                .publishers().listByRegion(region.getName()).stream().map(AzureImagePublisher::new).collect(Collectors.toList());
+    }
+
+    public List<AzureVirtualMachineSize> listPricing(final Region region) {
+        return listPricing(getDefaultSubscription().getId(), region);
+    }
+
+    public List<AzureVirtualMachineSize> listPricing(final String subscriptionId, final Region region) {
+        return ComputeManagerFactory.create(subscriptionId).virtualMachines().sizes().listByRegion(region.getName()).stream()
+                .map(AzureVirtualMachineSize::new).collect(Collectors.toList());
+    }
+
+    public List<AzureImage> getKnownImages() {
+        return images;
+    }
+
+    @Nonnull
+    public VirtualMachine create(@Nonnull final DraftVirtualMachine config) {
+        return config.create(this);
+    }
+
+    public VirtualMachines getVirtualMachinesManager(String subscriptionId) {
+        return ComputeManagerFactory.create(subscriptionId).virtualMachines();
+    }
+
+    @Override
+    public String name() {
+        return "VirtualMachine";
+    }
+}
