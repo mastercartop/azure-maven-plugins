@@ -11,10 +11,12 @@ import com.azure.resourcemanager.compute.models.KnownWindowsVirtualMachineImage;
 import com.azure.resourcemanager.compute.models.VirtualMachineImage;
 import com.microsoft.azure.toolkit.lib.compute.vm.model.OperatingSystem;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
 
+@EqualsAndHashCode
 public class AzureImage {
     @Nonnull
     @Getter(value = AccessLevel.PACKAGE)

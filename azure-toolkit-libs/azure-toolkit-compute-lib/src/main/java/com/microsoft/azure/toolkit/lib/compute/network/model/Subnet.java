@@ -4,9 +4,11 @@
  */
 package com.microsoft.azure.toolkit.lib.compute.network.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode
 public class Subnet {
     private final String name;
     private final String addressSpace;

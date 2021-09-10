@@ -5,18 +5,15 @@
 
 package com.microsoft.azure.toolkit.lib.compute.vm;
 
+import com.azure.resourcemanager.compute.ComputeManager;
 import com.azure.resourcemanager.compute.models.AvailabilitySet;
 import com.azure.resourcemanager.compute.models.ComputeResourceType;
 import com.azure.resourcemanager.compute.models.KnownLinuxVirtualMachineImage;
 import com.azure.resourcemanager.compute.models.KnownWindowsVirtualMachineImage;
 import com.azure.resourcemanager.compute.models.VirtualMachines;
-import com.microsoft.azure.toolkit.lib.Azure;
-import com.microsoft.azure.toolkit.lib.auth.AzureAccount;
-import com.microsoft.azure.toolkit.lib.auth.model.AuthType;
 import com.microsoft.azure.toolkit.lib.common.model.Region;
 import com.microsoft.azure.toolkit.lib.common.model.Subscription;
 import com.microsoft.azure.toolkit.lib.compute.AbstractAzureResourceModule;
-import com.microsoft.azure.toolkit.lib.compute.ComputeManagerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -59,7 +56,7 @@ public class AzureVirtualMachine extends AbstractAzureResourceModule<VirtualMach
     }
 
     public List<String> availabilitySets(@Nonnull final String subscriptionId) {
-        return ComputeManagerFactory.create(subscriptionId).availabilitySets().list().stream().map(AvailabilitySet::name).collect(Collectors.toList());
+        return getVirtualMachinesManager(subscriptionId).manager().availabilitySets().list().stream().map(AvailabilitySet::name).collect(Collectors.toList());
     }
 
     public List<AzureImagePublisher> publishers(final Region region) {
@@ -90,7 +87,7 @@ public class AzureVirtualMachine extends AbstractAzureResourceModule<VirtualMach
     }
 
     public VirtualMachines getVirtualMachinesManager(String subscriptionId) {
-        return ComputeManagerFactory.create(subscriptionId).virtualMachines();
+        return getResourceManager(subscriptionId, ComputeManager::configure, ComputeManager.Configurable::authenticate).virtualMachines();
     }
 
     @Override

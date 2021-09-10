@@ -71,6 +71,7 @@ public class DraftVirtualMachine extends VirtualMachine implements AzureResource
         this.remote = configureImage(withProximityPlacementGroup)
                 .withExistingAvailabilitySet(getAvailabilitySetClient())
                 .create();
+        this.remote.getPrimaryNetworkInterface().update().withExistingNetworkSecurityGroup(getSecurityGroupClient()).apply();
         refreshStatus();
         return this;
     }
@@ -86,6 +87,11 @@ public class DraftVirtualMachine extends VirtualMachine implements AzureResource
                     withLinuxImage.withRootPassword(password) : withLinuxImage.withSsh(sshKey);
             return withLinuxAuthentication.withSize(size.getName());
         }
+    }
+
+    private com.azure.resourcemanager.network.models.NetworkSecurityGroup getSecurityGroupClient() {
+        return Optional.ofNullable(module).map(parent -> parent.getVirtualMachinesManager(subscriptionId).manager())
+                .map(manager -> manager.networkManager().networkSecurityGroups().getByResourceGroup(resourceGroup, securityGroup.name())).orElse(null);
     }
 
     private AvailabilitySet getAvailabilitySetClient() {

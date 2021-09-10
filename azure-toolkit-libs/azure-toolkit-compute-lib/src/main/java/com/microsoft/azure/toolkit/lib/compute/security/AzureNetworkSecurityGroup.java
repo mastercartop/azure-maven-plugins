@@ -5,10 +5,10 @@
 
 package com.microsoft.azure.toolkit.lib.compute.security;
 
+import com.azure.resourcemanager.compute.ComputeManager;
 import com.azure.resourcemanager.network.models.NetworkSecurityGroups;
 import com.microsoft.azure.toolkit.lib.common.model.Subscription;
 import com.microsoft.azure.toolkit.lib.compute.AbstractAzureResourceModule;
-import com.microsoft.azure.toolkit.lib.compute.ComputeManagerFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -42,7 +42,7 @@ public class AzureNetworkSecurityGroup extends AbstractAzureResourceModule<Netwo
     }
 
     public NetworkSecurityGroups getSecurityGroupManager(final String subscriptionId) {
-        return ComputeManagerFactory.create(subscriptionId).networkManager().networkSecurityGroups();
+        return getResourceManager(subscriptionId, ComputeManager::configure, ComputeManager.Configurable::authenticate).networkManager().networkSecurityGroups();
     }
 
     @Override

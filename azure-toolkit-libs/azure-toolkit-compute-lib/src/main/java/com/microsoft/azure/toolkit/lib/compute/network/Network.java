@@ -9,12 +9,14 @@ import com.microsoft.azure.toolkit.lib.common.entity.IAzureBaseResource;
 import com.microsoft.azure.toolkit.lib.common.entity.IAzureModule;
 import com.microsoft.azure.toolkit.lib.compute.AbstractAzureResource;
 import com.microsoft.azure.toolkit.lib.compute.network.model.Subnet;
+import lombok.EqualsAndHashCode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode(callSuper = true)
 public class Network extends AbstractAzureResource<com.azure.resourcemanager.network.models.Network, IAzureBaseResource> {
     protected AzureNetwork module;
 

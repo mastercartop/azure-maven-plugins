@@ -7,6 +7,7 @@ package com.microsoft.azure.toolkit.lib.compute.ip;
 
 import com.microsoft.azure.toolkit.lib.common.model.Region;
 import com.microsoft.azure.toolkit.lib.compute.AzureResourceDraft;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class DraftPublicIpAddress extends PublicIpAddress implements AzureResourceDraft<PublicIpAddress> {
     private Region region;
     private String leafDomainLabel;

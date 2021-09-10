@@ -5,10 +5,10 @@
 
 package com.microsoft.azure.toolkit.lib.compute.network;
 
+import com.azure.resourcemanager.compute.ComputeManager;
 import com.azure.resourcemanager.network.models.Networks;
 import com.microsoft.azure.toolkit.lib.common.model.Subscription;
 import com.microsoft.azure.toolkit.lib.compute.AbstractAzureResourceModule;
-import com.microsoft.azure.toolkit.lib.compute.ComputeManagerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -40,7 +40,7 @@ public class AzureNetwork extends AbstractAzureResourceModule<Network> {
     }
 
     public Networks getNetworkManager(@Nonnull final String subscriptionId) {
-        return ComputeManagerFactory.create(subscriptionId).networkManager().networks();
+        return getResourceManager(subscriptionId, ComputeManager::configure, ComputeManager.Configurable::authenticate).networkManager().networks();
     }
 
     @Override

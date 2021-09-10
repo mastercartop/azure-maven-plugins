@@ -5,10 +5,10 @@
 
 package com.microsoft.azure.toolkit.lib.compute.ip;
 
+import com.azure.resourcemanager.compute.ComputeManager;
 import com.azure.resourcemanager.network.models.PublicIpAddresses;
 import com.microsoft.azure.toolkit.lib.common.model.Subscription;
 import com.microsoft.azure.toolkit.lib.compute.AbstractAzureResourceModule;
-import com.microsoft.azure.toolkit.lib.compute.ComputeManagerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -41,7 +41,7 @@ public class AzurePublicIpAddress extends AbstractAzureResourceModule<PublicIpAd
     }
 
     public PublicIpAddresses getPublicIpAddressManager(String subscriptionId) {
-        return ComputeManagerFactory.create(subscriptionId).networkManager().publicIpAddresses();
+        return getResourceManager(subscriptionId, ComputeManager::configure, ComputeManager.Configurable::authenticate).networkManager().publicIpAddresses();
     }
 
     @Override

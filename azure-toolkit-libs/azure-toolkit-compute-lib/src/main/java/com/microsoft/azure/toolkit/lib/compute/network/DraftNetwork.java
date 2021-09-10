@@ -9,6 +9,7 @@ import com.azure.resourcemanager.network.models.Network.DefinitionStages.WithCre
 import com.microsoft.azure.toolkit.lib.common.model.Region;
 import com.microsoft.azure.toolkit.lib.compute.AzureResourceDraft;
 import com.microsoft.azure.toolkit.lib.compute.network.model.Subnet;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -18,8 +19,10 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class DraftNetwork extends Network implements AzureResourceDraft<Network> {
 
     private String subscriptionId;

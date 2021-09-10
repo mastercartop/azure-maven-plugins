@@ -6,9 +6,11 @@
 package com.microsoft.azure.toolkit.lib.compute.vm;
 
 import com.azure.resourcemanager.compute.models.ComputeSku;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode
 public class AzureVirtualMachineSize {
     private final String name;
 
