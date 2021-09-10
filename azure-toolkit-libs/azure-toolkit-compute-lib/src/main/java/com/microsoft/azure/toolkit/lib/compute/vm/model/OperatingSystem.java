@@ -5,7 +5,16 @@
 
 package com.microsoft.azure.toolkit.lib.compute.vm.model;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+
 public enum OperatingSystem {
     Windows,
-    Linux
+    Linux;
+
+    public static OperatingSystem fromString(String value) {
+        return Arrays.stream(values()).filter(operatingSystem -> StringUtils.equalsIgnoreCase(operatingSystem.name(), value))
+                .findFirst().orElse(null);
+    }
 }

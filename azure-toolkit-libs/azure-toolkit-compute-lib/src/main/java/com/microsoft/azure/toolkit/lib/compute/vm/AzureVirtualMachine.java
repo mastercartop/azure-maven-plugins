@@ -6,9 +6,13 @@
 package com.microsoft.azure.toolkit.lib.compute.vm;
 
 import com.azure.resourcemanager.compute.models.AvailabilitySet;
+import com.azure.resourcemanager.compute.models.ComputeResourceType;
 import com.azure.resourcemanager.compute.models.KnownLinuxVirtualMachineImage;
 import com.azure.resourcemanager.compute.models.KnownWindowsVirtualMachineImage;
 import com.azure.resourcemanager.compute.models.VirtualMachines;
+import com.microsoft.azure.toolkit.lib.Azure;
+import com.microsoft.azure.toolkit.lib.auth.AzureAccount;
+import com.microsoft.azure.toolkit.lib.auth.model.AuthType;
 import com.microsoft.azure.toolkit.lib.common.model.Region;
 import com.microsoft.azure.toolkit.lib.common.model.Subscription;
 import com.microsoft.azure.toolkit.lib.compute.AbstractAzureResourceModule;
@@ -72,7 +76,7 @@ public class AzureVirtualMachine extends AbstractAzureResourceModule<VirtualMach
     }
 
     public List<AzureVirtualMachineSize> listPricing(final String subscriptionId, final Region region) {
-        return ComputeManagerFactory.create(subscriptionId).virtualMachines().sizes().listByRegion(region.getName()).stream()
+        return getVirtualMachinesManager(subscriptionId).manager().computeSkus().listByRegionAndResourceType(com.azure.core.management.Region.fromName(region.getName()), ComputeResourceType.VIRTUALMACHINES).stream()
                 .map(AzureVirtualMachineSize::new).collect(Collectors.toList());
     }
 

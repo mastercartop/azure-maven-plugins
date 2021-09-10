@@ -111,7 +111,7 @@
         <jansi.version>2.3.2</jansi.version>
         <jetbrains.annotations.version>21.0.1</jetbrains.annotations.version>
         <json.schema.validator.version>2.2.14</json.schema.validator.version>
-        <groovy.version>2.5.14</groovy.version>
+        <groovy.version>2.5.11</groovy.version>
         <junit.version>4.13.2</junit.version>
         <lombok.version>1.18.20</lombok.version>
         <mockito.version>3.10.0</mockito.version>

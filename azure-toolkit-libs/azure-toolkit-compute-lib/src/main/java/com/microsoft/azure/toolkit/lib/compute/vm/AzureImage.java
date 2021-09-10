@@ -24,7 +24,7 @@ public class AzureImage {
     private final OperatingSystem operatingSystem;
 
     AzureImage(@Nonnull VirtualMachineImage virtualMachineImage) {
-        this.operatingSystem = OperatingSystem.valueOf(virtualMachineImage.osDiskImage().operatingSystem().name());
+        this.operatingSystem = OperatingSystem.fromString(virtualMachineImage.osDiskImage().operatingSystem().name());
         this.imageReference = virtualMachineImage.imageReference();
     }
 

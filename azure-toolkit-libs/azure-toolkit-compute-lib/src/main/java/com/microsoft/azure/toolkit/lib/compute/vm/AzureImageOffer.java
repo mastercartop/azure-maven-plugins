@@ -31,7 +31,7 @@ public class AzureImageOffer {
         return Region.fromName(virtualMachineOffer.region().name());
     }
 
-    public List<AzureImageSku> offers() {
+    public List<AzureImageSku> skus() {
         return virtualMachineOffer.skus().list().stream().map(sku -> new AzureImageSku(this, sku)).collect(Collectors.toList());
     }
 }

@@ -23,10 +23,6 @@ public class DraftNetworkSecurityGroup extends NetworkSecurityGroup implements A
     private String resourceGroup;
     private String name;
     private Region region;
-    private String addressSpace;
-
-    private String subnet;
-    private String subnetAddressSpace;
 
     public DraftNetworkSecurityGroup(@Nonnull final String subscriptionId, @Nonnull final String resourceGroup, @Nonnull final String name) {
         super(getResourceId(subscriptionId, resourceGroup, name), null);
