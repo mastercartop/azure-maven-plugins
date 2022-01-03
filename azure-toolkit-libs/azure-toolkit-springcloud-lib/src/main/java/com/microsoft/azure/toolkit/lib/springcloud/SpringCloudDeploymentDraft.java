@@ -19,6 +19,7 @@ import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 import com.microsoft.azure.toolkit.lib.springcloud.config.SpringCloudDeploymentConfig;
 import com.microsoft.azure.toolkit.lib.springcloud.model.SpringCloudJavaVersion;
 import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
@@ -51,6 +52,7 @@ public class SpringCloudDeploymentDraft extends SpringCloudDeployment
 
     @Delegate
     private final IConfig configProxy;
+    @Getter
     private Config config;
 
     protected SpringCloudDeploymentDraft(@Nonnull String name, @Nonnull SpringCloudDeploymentModule module) {
@@ -219,7 +221,7 @@ public class SpringCloudDeploymentDraft extends SpringCloudDeployment
      * {@code null} means not modified for properties
      */
     @Data
-    private static class Config implements IConfig {
+    public static class Config implements IConfig {
         @Nullable
         Map<String, String> environmentVariables;
         @Nullable
@@ -237,7 +239,7 @@ public class SpringCloudDeploymentDraft extends SpringCloudDeployment
     }
 
 
-    private interface IConfig {
+    public interface IConfig {
         void setEnvironmentVariables(Map<String, String> environmentVariables);
 
         void setJvmOptions(String jvmOptions);

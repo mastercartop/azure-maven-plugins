@@ -14,9 +14,8 @@ import com.microsoft.azure.toolkit.lib.common.messager.AzureMessager;
 import com.microsoft.azure.toolkit.lib.common.messager.IAzureMessager;
 import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResource;
 import com.microsoft.azure.toolkit.lib.common.model.AzResource;
-import com.microsoft.azure.toolkit.lib.springcloud.config.SpringCloudAppConfig;
-import com.microsoft.azure.toolkit.lib.springcloud.config.SpringCloudDeploymentConfig;
 import lombok.Data;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -38,36 +37,12 @@ public class SpringCloudAppDraft extends SpringCloudApp implements AzResource.Dr
     public static final int STANDARD_TIER_DEFAULT_DISK_SIZE = 50;
     private SpringCloudDeployment activeDeployment;
     @Nullable
+    @Getter
     private Config config;
 
     SpringCloudAppDraft(@Nonnull String name, @Nonnull SpringCloudAppModule module) {
         super(name, module);
         this.setStatus(Status.DRAFT);
-    }
-
-    public void setConfig(SpringCloudAppConfig c) {
-        this.setName(c.getAppName());
-        this.setActiveDeploymentName(c.getActiveDeploymentName());
-        this.setPublicEndpointEnabled(c.getIsPublic());
-        final SpringCloudDeploymentConfig deploymentConfig = c.getDeployment();
-        final SpringCloudDeploymentDraft deploymentDraft = this.updateOrCreateActiveDeployment();
-        this.setPersistentDiskEnabled(deploymentConfig.getEnablePersistentStorage());
-        deploymentDraft.setConfig(deploymentConfig);
-    }
-
-    public SpringCloudAppConfig getConfig() {
-        final SpringCloudDeploymentConfig deploymentConfig = activeDeployment instanceof SpringCloudDeploymentDraft ?
-            ((SpringCloudDeploymentDraft) activeDeployment).getConfig() : SpringCloudDeploymentConfig.builder().build();
-        deploymentConfig.setEnablePersistentStorage(this.isPersistentDiskEnabled());
-        return SpringCloudAppConfig.builder()
-            .subscriptionId(this.getSubscriptionId())
-            .clusterName(this.getParent().getName())
-            .appName(this.getName())
-            .resourceGroup(this.getResourceGroupName())
-            .isPublic(this.isPublicEndpointEnabled())
-            .activeDeploymentName(this.getActiveDeploymentName())
-            .deployment(deploymentConfig)
-            .build();
     }
 
     @Override

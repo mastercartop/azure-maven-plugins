@@ -70,7 +70,7 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
         Azure.az(IAzureAccount.class).account();
         this.doModify(() -> {
             try {
-                return this.getModule().loadResourceFromAzure(this.name, this.resourceGroupName);
+                return this.getModule().loadResourceFromAzure(this.getName(), this.getResourceGroupName());
             } catch (ManagementException e) {
                 if (HttpStatus.SC_NOT_FOUND == e.getResponse().getStatusCode()) {
                     return null;
@@ -92,7 +92,7 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
         this.doModify(() -> {
             this.getModule().deleteResourceFromAzure(this.getId());
             this.setStatus(Status.DELETED);
-            this.getModule().deleteResourceFromLocal(name);
+            this.getModule().deleteResourceFromLocal(this.getName());
             return null;
         }, Status.DELETING);
     }
@@ -187,7 +187,7 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
 
     @Nonnull
     public String getId() {
-        return this.getModule().toResourceId(this.name, this.resourceGroupName);
+        return this.getModule().toResourceId(this.getName(), this.getResourceGroupName());
     }
 
     public abstract List<AzResourceModule<?, T, ?>> getSubModules();
@@ -206,5 +206,11 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
     private <D> D cast(@Nonnull Object origin) {
         //noinspection unchecked
         return (D) origin;
+    }
+
+    @Nonnull
+    public AzResourceModule<?, T, ?> getSubModule(String moduleName) {
+        return this.getSubModules().stream().filter(m -> m.getName().equals(moduleName)).findAny()
+            .orElseThrow(() -> new AzureToolkitRuntimeException(String.format("invalid module\"%s\"", moduleName)));
     }
 }
