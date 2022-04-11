@@ -18,6 +18,9 @@ import com.microsoft.azure.toolkit.lib.appservice.model.WebContainer;
 import com.microsoft.azure.toolkit.lib.appservice.plan.AppServicePlanDraft;
 import com.microsoft.azure.toolkit.lib.appservice.webapp.AzureWebApp;
 import com.microsoft.azure.toolkit.lib.appservice.webapp.WebApp;
+import com.microsoft.azure.toolkit.lib.appservice.webapp.WebAppBase;
+import com.microsoft.azure.toolkit.lib.appservice.webapp.WebAppDeploymentSlot;
+import com.microsoft.azure.toolkit.lib.appservice.webapp.WebAppDeploymentSlotDraft;
 import com.microsoft.azure.toolkit.lib.appservice.webapp.WebAppDraft;
 import com.microsoft.azure.toolkit.lib.common.bundle.AzureString;
 import com.microsoft.azure.toolkit.lib.common.exception.AzureToolkitRuntimeException;
@@ -31,17 +34,21 @@ import com.microsoft.azure.toolkit.lib.resource.task.CreateResourceGroupTask;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static com.microsoft.azure.toolkit.lib.appservice.utils.Utils.throwForbidCreateResourceWarning;
 
 @Slf4j
 public class CreateOrUpdateWebAppTask extends AzureTask<WebApp> {
     private static final String CREATE_NEW_WEB_APP = "createNewWebApp";
+    private static final String WEBAPP_NOT_EXIST_FOR_SLOT = "The Web App specified in pom.xml does not exist. " +
+            "Please make sure the Web App name is correct.";
 
     private final AppServiceConfig config;
     private final List<AzureTask<?>> subTasks;
@@ -57,25 +64,38 @@ public class CreateOrUpdateWebAppTask extends AzureTask<WebApp> {
     private List<AzureTask<?>> initTasks() {
         final List<AzureTask<?>> tasks = new ArrayList<>();
         final AzureString title = AzureString.format("Create new web app({0})", this.config.appName());
-        AzureAppService az = Azure.az(AzureWebApp.class);
-        tasks.add(new AzureTask<>(title, () -> {
-            final WebApp target = az.webApps(config.subscriptionId())
-                .getOrDraft(config.appName(), config.resourceGroup());
+        tasks.add(new AzureTask<>(title, this::createOrUpdateResource));
+        return tasks;
+    }
+
+    private WebAppBase<?, ?, ?> createOrUpdateResource() {
+        final AzureAppService az = Azure.az(AzureWebApp.class);
+        final WebApp target = az.webApps(config.subscriptionId()).getOrDraft(config.appName(), config.resourceGroup());
+        if (!isDeployToDeploymentSlot()) {
             if (!target.exists()) {
                 if (skipCreateAzureResource) {
                     throwForbidCreateResourceWarning("Web app", config.appName());
                 }
-                Availability result = az.get(config.subscriptionId(), null).checkNameAvailability(config.appName());
+                final Availability result = Objects.requireNonNull(az.get(config.subscriptionId(), null)).checkNameAvailability(config.appName());
                 if (!result.isAvailable()) {
                     throw new AzureToolkitRuntimeException(AzureString.format("Cannot create webapp {0} due to error: {1}",
-                        config.appName(),
-                        result.getUnavailabilityReason()).getString());
+                            config.appName(), result.getUnavailabilityReason()).getString());
                 }
                 return create();
+            } else {
+                return update(target);
             }
-            return update(target);
-        }));
-        return tasks;
+        } else {
+            if (!target.exists()) {
+                throw new AzureToolkitRuntimeException(WEBAPP_NOT_EXIST_FOR_SLOT);
+            }
+            final WebAppDeploymentSlotDraft slotDraft = target.slots().updateOrCreate(config.deploymentSlotName(), config.resourceGroup());
+            final boolean slotExists = slotDraft.exists();
+            if (!slotExists && skipCreateAzureResource) {
+                throwForbidCreateResourceWarning("Deployment slot", config.deploymentSlotName());
+            }
+            return slotExists ? updateDeploymentSlot(slotDraft) : createDeploymentSlot(slotDraft);
+        }
     }
 
     @AzureOperation(name = "webapp.create_app.app", params = {"this.config.appName()"}, type = Type.SERVICE)
@@ -88,7 +108,7 @@ public class CreateOrUpdateWebAppTask extends AzureTask<WebApp> {
         final AzureAppService az = Azure.az(AzureAppService.class);
 
         final AppServicePlanDraft planDraft = az.plans(planConfig.subscriptionId())
-            .updateOrCreate(planConfig.servicePlanName(), planConfig.servicePlanResourceGroup());
+                .updateOrCreate(planConfig.servicePlanName(), planConfig.servicePlanResourceGroup());
         planDraft.setPlanConfig(planConfig);
 
         final WebAppDraft appDraft = az.webApps(config.subscriptionId()).create(config.appName(), config.resourceGroup());
@@ -106,7 +126,7 @@ public class CreateOrUpdateWebAppTask extends AzureTask<WebApp> {
         final Runtime runtime = getRuntime(config.runtime());
 
         AppServicePlanDraft planDraft = Azure.az(AzureAppService.class).plans(servicePlanConfig.subscriptionId())
-            .updateOrCreate(servicePlanConfig.servicePlanName(), servicePlanConfig.servicePlanResourceGroup());
+                .updateOrCreate(servicePlanConfig.servicePlanName(), servicePlanConfig.servicePlanResourceGroup());
         if (skipCreateAzureResource && !planDraft.exists()) {
             throwForbidCreateResourceWarning("Service plan", servicePlanConfig.servicePlanResourceGroup() + "/" + servicePlanConfig.servicePlanName());
         }
@@ -117,6 +137,23 @@ public class CreateOrUpdateWebAppTask extends AzureTask<WebApp> {
         draft.setDockerConfiguration(getDockerConfiguration(config.runtime()));
         draft.setAppSettings(ObjectUtils.firstNonNull(config.appSettings(), new HashMap<>()));
         return draft.updateIfExist();
+    }
+
+    @AzureOperation(name = "webapp.create_slot.slot|app", params = {"this.config.deploymentSlotName()", "this.config.appName()"}, type = Type.SERVICE)
+    private WebAppDeploymentSlot createDeploymentSlot(final WebAppDeploymentSlotDraft draft) {
+        draft.setAppSettings(config.appSettings());
+        draft.setConfigurationSource(config.deploymentSlotConfigurationSource());
+        return draft.commit();
+    }
+
+    @AzureOperation(name = "webapp.update_slot.slot|app", params = {"this.config.deploymentSlotName()", "this.config.appName()"}, type = Type.SERVICE)
+    private WebAppDeploymentSlot updateDeploymentSlot(final WebAppDeploymentSlotDraft draft) {
+        draft.setAppSettings(config.appSettings());
+        return draft.commit();
+    }
+
+    private boolean isDeployToDeploymentSlot() {
+        return StringUtils.isNoneBlank(config.deploymentSlotName());
     }
 
     private DockerConfiguration getDockerConfiguration(RuntimeConfig runtime) {
