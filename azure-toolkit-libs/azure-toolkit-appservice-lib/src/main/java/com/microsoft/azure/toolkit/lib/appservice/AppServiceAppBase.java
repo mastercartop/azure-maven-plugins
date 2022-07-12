@@ -109,18 +109,6 @@ public abstract class AppServiceAppBase<
         this.doModify(() -> Objects.requireNonNull(this.getFullRemote()).restart(), AzResource.Status.RESTARTING);
     }
 
-    public void deploy(@Nonnull DeployType deployType, @Nonnull File targetFile, @Nullable String targetPath) {
-        final WebSiteBase remote = this.getRemote();
-        if (remote instanceof SupportsOneDeploy) {
-            final DeployOptions options = new DeployOptions().withPath(targetPath);
-            AzureMessager.getMessager().info(AzureString.format("Deploying (%s)[%s] %s ...", targetFile.toString(),
-                (deployType.toString()), StringUtils.isBlank(targetPath) ? "" : (" to " + (targetPath))));
-            final com.azure.resourcemanager.appservice.models.DeployType type =
-                com.azure.resourcemanager.appservice.models.DeployType.fromString(deployType.getValue());
-            this.doModify(() -> Objects.requireNonNull(((SupportsOneDeploy) remote)).deploy(type, targetFile, options), Status.DEPLOYING);
-        }
-    }
-
     @Nullable
     public String getHostName() {
         return this.remoteOptional().map(WebSiteBase::defaultHostname).orElse(null);
