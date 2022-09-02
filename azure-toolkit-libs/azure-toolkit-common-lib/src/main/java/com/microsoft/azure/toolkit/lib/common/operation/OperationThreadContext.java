@@ -55,6 +55,10 @@ public class OperationThreadContext {
         return this.operation;
     }
 
+    public void resetThreadId() {
+        this.threadId = -1;
+    }
+
     synchronized void pushOperation(final Operation operation) {
         if (Objects.isNull(this.parent) && Objects.isNull(this.operation)) {
             log.fine(String.format("orphan context[%s] is setup", this));
@@ -114,9 +118,11 @@ public class OperationThreadContext {
         final OperationThreadContext current = OperationThreadContext.current();
         final long threadId = Thread.currentThread().getId();
         assert this == current && this.threadId == threadId : String.format("[threadId:%s] disposing context[%s] in context[%s].", threadId, this, current);
-        if (this.parent == null || this.threadId != this.parent.threadId) { // this is the root task of current thread.
+        if (this.parent == null || this.threadId != this.parent.threadId || this.parent.threadId == -1) { // this is the root task of current thread.
+            OperationThreadContext.context.get().resetThreadId();
             OperationThreadContext.context.remove();
         } else { // this is not the root task of current thread.
+            OperationThreadContext.context.get().resetThreadId();
             OperationThreadContext.context.set(this.parent);
         }
     }
