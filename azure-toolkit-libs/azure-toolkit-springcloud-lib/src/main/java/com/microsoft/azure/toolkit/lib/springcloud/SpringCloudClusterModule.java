@@ -18,7 +18,7 @@ import java.util.Optional;
 
 import static com.microsoft.azure.toolkit.lib.common.model.AzResource.RESOURCE_GROUP_PLACEHOLDER;
 
-public class SpringCloudClusterModule extends AbstractAzResourceModule<SpringCloudCluster, SpringCloudServiceSubscription, SpringService> {
+public class SpringCloudClusterModule extends AbstractAzResourceModule<SpringCloudCluster, SpringService> {
 
     public static final String NAME = "Spring";
 
@@ -29,7 +29,7 @@ public class SpringCloudClusterModule extends AbstractAzResourceModule<SpringClo
     @Nullable
     @Override
     public SpringServices getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(AppPlatformManager::springServices).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (AppPlatformManager) r).map(AppPlatformManager::springServices).orElse(null);
     }
 
     @Nullable

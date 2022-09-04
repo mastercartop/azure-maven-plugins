@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Network extends AbstractAzResource<Network, NetworkServiceSubscription, com.azure.resourcemanager.network.models.Network> {
+public class Network extends AbstractAzResource<Network, com.azure.resourcemanager.network.models.Network> {
 
     protected Network(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull NetworkModule module) {
         super(name, resourceGroupName, module);
@@ -36,7 +36,7 @@ public class Network extends AbstractAzResource<Network, NetworkServiceSubscript
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, Network, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

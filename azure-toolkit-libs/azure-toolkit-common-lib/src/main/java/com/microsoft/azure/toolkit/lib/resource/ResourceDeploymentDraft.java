@@ -12,6 +12,7 @@ import com.microsoft.azure.toolkit.lib.common.bundle.AzureString;
 import com.microsoft.azure.toolkit.lib.common.exception.AzureToolkitRuntimeException;
 import com.microsoft.azure.toolkit.lib.common.messager.AzureMessager;
 import com.microsoft.azure.toolkit.lib.common.messager.IAzureMessager;
+import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResource;
 import com.microsoft.azure.toolkit.lib.common.model.AzResource;
 import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 import lombok.Data;
@@ -58,15 +59,15 @@ public class ResourceDeploymentDraft extends ResourceDeployment
         type = AzureOperation.Type.SERVICE
     )
     public com.azure.resourcemanager.resources.models.Deployment createResourceInAzure() {
-        final ResourceGroup group = this.getParent();
+        final ResourceGroup group = (ResourceGroup) this.getParent();
         final String name = this.getName();
         final String template = this.getTemplateAsJson();
         final String parameters = this.getParametersAsJson();
         if (StringUtils.isAnyBlank(name, template, parameters)) {
             throw new AzureToolkitRuntimeException("'name', 'template', 'parameters' are all required to create deployment.");
         }
-        final ResourceManager manager = Objects.requireNonNull(this.getParent().getParent().getRemote());
-        final Deployment.DefinitionStages.Blank define = manager.deployments().define(name);
+        final ResourceManager manager = (ResourceManager) ((AbstractAzResource<?, ?>) this.getParent().getParent()).getRemote();
+        final Deployment.DefinitionStages.Blank define = Objects.requireNonNull(manager).deployments().define(name);
         final Deployment.DefinitionStages.WithTemplate withTemplate = group.exists() ?
             define.withExistingResourceGroup(group.getName()) :
             define.withNewResourceGroup(group.getName(), com.azure.core.management.Region.fromName(group.getRegion().getName()));

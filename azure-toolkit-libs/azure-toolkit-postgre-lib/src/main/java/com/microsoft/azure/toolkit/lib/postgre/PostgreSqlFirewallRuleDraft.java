@@ -50,8 +50,9 @@ public class PostgreSqlFirewallRuleDraft extends PostgreSqlFirewallRule implemen
         type = AzureOperation.Type.SERVICE
     )
     public FirewallRule createResourceInAzure() {
-        final PostgreSqlServer server = this.getParent();
-        final PostgreSqlManager manager = Objects.requireNonNull(server.getParent().getRemote());
+        final PostgreSqlServer server = (PostgreSqlServer) this.getParent();
+        final PostgreSqlServiceSubscription parent = (PostgreSqlServiceSubscription) server.getParent();
+        final PostgreSqlManager manager = Objects.requireNonNull(parent.getRemote());
         final FirewallRule.DefinitionStages.WithCreate withCreate = manager.firewallRules().define(this.getName())
             .withExistingServer(this.getResourceGroupName(), server.getName())
             .withStartIpAddress(this.getStartIpAddress())
@@ -74,8 +75,9 @@ public class PostgreSqlFirewallRuleDraft extends PostgreSqlFirewallRule implemen
         final Optional<String> modifiedStartIp = Optional.ofNullable(this.getStartIpAddress()).filter(n -> !Objects.equals(n, super.getStartIpAddress()));
         final Optional<String> modifiedEndIp = Optional.ofNullable(this.getEndIpAddress()).filter(n -> !Objects.equals(n, super.getEndIpAddress()));
         if (modifiedStartIp.isPresent() || modifiedEndIp.isPresent()) {
-            final PostgreSqlServer server = this.getParent();
-            final PostgreSqlManager manager = Objects.requireNonNull(server.getParent().getRemote());
+            final PostgreSqlServer server = (PostgreSqlServer) this.getParent();
+            final PostgreSqlServiceSubscription parent = (PostgreSqlServiceSubscription) server.getParent();
+            final PostgreSqlManager manager = Objects.requireNonNull(parent.getRemote());
             final FirewallRule.Update update = manager.firewallRules().get(this.getResourceGroupName(), server.getName(), this.getName()).update();
             modifiedStartIp.ifPresent(update::withStartIpAddress);
             modifiedEndIp.ifPresent(update::withEndIpAddress);

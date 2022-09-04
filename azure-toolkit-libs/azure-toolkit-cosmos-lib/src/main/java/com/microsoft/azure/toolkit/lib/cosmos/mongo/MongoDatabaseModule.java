@@ -7,9 +7,9 @@ package com.microsoft.azure.toolkit.lib.cosmos.mongo;
 
 import com.azure.resourcemanager.cosmos.fluent.MongoDBResourcesClient;
 import com.azure.resourcemanager.cosmos.fluent.models.MongoDBDatabaseGetResultsInner;
+import com.azure.resourcemanager.cosmos.models.CosmosDBAccount;
 import com.azure.resourcemanager.resources.fluentcore.arm.ResourceId;
 import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResourceModule;
-import com.microsoft.azure.toolkit.lib.cosmos.CosmosDBAccount;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class MongoDatabaseModule extends AbstractAzResourceModule<MongoDatabase, CosmosDBAccount, MongoDBDatabaseGetResultsInner> {
+public class MongoDatabaseModule extends AbstractAzResourceModule<MongoDatabase, MongoDBDatabaseGetResultsInner> {
     private static final String NAME = "mongodbDatabases";
 
     public MongoDatabaseModule(@NotNull MongoCosmosDBAccount parent) {
@@ -70,6 +70,8 @@ public class MongoDatabaseModule extends AbstractAzResourceModule<MongoDatabase,
     @Nullable
     @Override
     protected MongoDBResourcesClient getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(account -> account.manager().serviceClient().getMongoDBResources()).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote())
+            .map(r -> ((CosmosDBAccount) r))
+            .map(account -> account.manager().serviceClient().getMongoDBResources()).orElse(null);
     }
 }

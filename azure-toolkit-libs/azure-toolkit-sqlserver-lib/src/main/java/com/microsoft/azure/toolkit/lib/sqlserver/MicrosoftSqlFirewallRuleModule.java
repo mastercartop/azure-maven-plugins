@@ -10,6 +10,7 @@ import com.azure.resourcemanager.sql.models.SqlFirewallRule;
 import com.azure.resourcemanager.sql.models.SqlFirewallRuleOperations;
 import com.azure.resourcemanager.sql.models.SqlServer;
 import com.google.common.base.Preconditions;
+import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResource;
 import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResourceModule;
 import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 import com.microsoft.azure.toolkit.lib.database.entity.IFirewallRule;
@@ -22,7 +23,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
-public class MicrosoftSqlFirewallRuleModule extends AbstractAzResourceModule<MicrosoftSqlFirewallRule, MicrosoftSqlServer, SqlFirewallRule> {
+public class MicrosoftSqlFirewallRuleModule extends AbstractAzResourceModule<MicrosoftSqlFirewallRule, SqlFirewallRule> {
     public static final String NAME = "firewallRules";
 
     public MicrosoftSqlFirewallRuleModule(@Nonnull MicrosoftSqlServer parent) {
@@ -89,7 +90,9 @@ public class MicrosoftSqlFirewallRuleModule extends AbstractAzResourceModule<Mic
     @Nullable
     @Override
     protected SqlFirewallRuleOperations.SqlFirewallRuleActionsDefinition getClient() {
-        return Optional.ofNullable(this.getParent().getRemote()).map(SqlServer::firewallRules).orElse(null);
+        return Optional.ofNullable(this.getParent().getRemote())
+            .map(r -> ((SqlServer) r))
+            .map(SqlServer::firewallRules).orElse(null);
     }
 
     void toggleAzureServiceAccess(boolean allowed) {
@@ -109,13 +112,14 @@ public class MicrosoftSqlFirewallRuleModule extends AbstractAzResourceModule<Mic
 
     void toggleLocalMachineAccess(boolean allowed) {
         final String ruleName = IFirewallRule.getLocalMachineAccessRuleName();
-        final String rgName = this.getParent().getResourceGroupName();
+        final MicrosoftSqlServer parent = (MicrosoftSqlServer) this.getParent();
+        final String rgName = parent.getResourceGroupName();
         final boolean exists = this.exists(ruleName, rgName);
         if (!allowed && exists) {
             this.delete(ruleName, rgName);
         }
         if (allowed && !exists) {
-            final String publicIp = this.getParent().getLocalMachinePublicIp();
+            final String publicIp = parent.getLocalMachinePublicIp();
             Preconditions.checkArgument(StringUtils.isNotBlank(publicIp),
                 "Cannot enable local machine access to SqlServer due to error: cannot get public ip.");
             final MicrosoftSqlFirewallRuleDraft draft = this.updateOrCreate(ruleName, rgName);

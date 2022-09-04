@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class PublicIpAddress extends AbstractAzResource<PublicIpAddress, NetworkServiceSubscription, com.azure.resourcemanager.network.models.PublicIpAddress> {
+public class PublicIpAddress extends AbstractAzResource<PublicIpAddress, com.azure.resourcemanager.network.models.PublicIpAddress> {
 
     protected PublicIpAddress(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull PublicIpAddressModule module) {
         super(name, resourceGroupName, module);
@@ -34,7 +34,7 @@ public class PublicIpAddress extends AbstractAzResource<PublicIpAddress, Network
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, PublicIpAddress, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

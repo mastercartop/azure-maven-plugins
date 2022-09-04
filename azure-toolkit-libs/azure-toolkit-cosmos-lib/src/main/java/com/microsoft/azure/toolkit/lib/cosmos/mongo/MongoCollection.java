@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class MongoCollection extends AbstractAzResource<MongoCollection, MongoDatabase, MongoDBCollectionGetResultsInner> implements Deletable, ICosmosCollection {
+public class MongoCollection extends AbstractAzResource<MongoCollection, MongoDBCollectionGetResultsInner> implements Deletable, ICosmosCollection {
 
     protected MongoCollection(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull MongoCollectionModule module) {
         super(name, resourceGroupName, module);
@@ -32,7 +32,7 @@ public class MongoCollection extends AbstractAzResource<MongoCollection, MongoDa
 
     @NotNull
     @Override
-    public List<AbstractAzResourceModule<?, MongoCollection, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

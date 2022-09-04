@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class StorageAccountModule extends AbstractAzResourceModule<StorageAccount, StorageServiceSubscription, com.azure.resourcemanager.storage.models.StorageAccount> {
+public class StorageAccountModule extends AbstractAzResourceModule<StorageAccount, com.azure.resourcemanager.storage.models.StorageAccount> {
 
     public static final String NAME = "storageAccounts";
 
@@ -26,7 +26,7 @@ public class StorageAccountModule extends AbstractAzResourceModule<StorageAccoun
     @Nullable
     @Override
     public StorageAccounts getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(StorageManager::storageAccounts).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (StorageManager) r).map(StorageManager::storageAccounts).orElse(null);
     }
 
     @Nonnull

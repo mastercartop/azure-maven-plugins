@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class KubernetesClusterModule extends AbstractAzResourceModule<KubernetesCluster, ContainerServiceSubscription,
+public class KubernetesClusterModule extends AbstractAzResourceModule<KubernetesCluster,
         com.azure.resourcemanager.containerservice.models.KubernetesCluster> {
     private static final String NAME = "managedClusters";
 
@@ -49,7 +49,7 @@ public class KubernetesClusterModule extends AbstractAzResourceModule<Kubernetes
     @Nullable
     @Override
     public KubernetesClusters getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(ContainerServiceManager::kubernetesClusters).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (ContainerServiceManager) r).map(ContainerServiceManager::kubernetesClusters).orElse(null);
     }
 
     @Nonnull

@@ -6,6 +6,7 @@
 package com.microsoft.azure.toolkit.lib.mysql;
 
 import com.azure.core.util.ExpandableStringEnum;
+import com.azure.resourcemanager.mysql.MySqlManager;
 import com.azure.resourcemanager.mysql.models.Server;
 import com.azure.resourcemanager.mysql.models.Sku;
 import com.azure.resourcemanager.mysql.models.SslEnforcementEnum;
@@ -29,9 +30,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
-public class MySqlServer extends AbstractAzResource<MySqlServer, MySqlServiceSubscription, Server>
+public class MySqlServer extends AbstractAzResource<MySqlServer, Server>
     implements Deletable, Startable, IDatabaseServer<MySqlDatabase> {
 
     private final MySqlDatabaseModule databaseModule;
@@ -66,7 +67,7 @@ public class MySqlServer extends AbstractAzResource<MySqlServer, MySqlServiceSub
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, MySqlServer, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Arrays.asList(this.firewallRuleModule, this.databaseModule);
     }
 
@@ -88,17 +89,26 @@ public class MySqlServer extends AbstractAzResource<MySqlServer, MySqlServiceSub
 
     @AzureOperation(name = "resource.start_resource.resource", params = {"this.getName()"}, type = AzureOperation.Type.SERVICE)
     public void start() {
-        this.doModify(() -> Objects.requireNonNull(this.getParent().getRemote()).servers().start(this.getResourceGroupName(), this.getName()), Status.STARTING);
+        this.doModify(() -> Optional.of(this.getParent())
+            .map(p -> ((AbstractAzResource<?, ?>) p).getRemote())
+            .map(r -> ((MySqlManager) r).servers())
+            .ifPresent(s -> s.start(this.getResourceGroupName(), this.getName())), Status.STARTING);
     }
 
     @AzureOperation(name = "resource.stop_resource.resource", params = {"this.getName()"}, type = AzureOperation.Type.SERVICE)
     public void stop() {
-        this.doModify(() -> Objects.requireNonNull(this.getParent().getRemote()).servers().stop(this.getResourceGroupName(), this.getName()), Status.STOPPING);
+        this.doModify(() -> Optional.of(this.getParent())
+            .map(p -> ((AbstractAzResource<?, ?>) p).getRemote())
+            .map(r -> ((MySqlManager) r).servers())
+            .ifPresent(s -> s.stop(this.getResourceGroupName(), this.getName())), Status.STOPPING);
     }
 
     @AzureOperation(name = "resource.restart_resource.resource", params = {"this.getName()"}, type = AzureOperation.Type.SERVICE)
     public void restart() {
-        this.doModify(() -> Objects.requireNonNull(this.getParent().getRemote()).servers().restart(this.getResourceGroupName(), this.getName()), Status.RESTARTING);
+        this.doModify(() -> Optional.of(this.getParent())
+            .map(p -> ((AbstractAzResource<?, ?>) p).getRemote())
+            .map(r -> ((MySqlManager) r).servers())
+            .ifPresent(s -> s.restart(this.getResourceGroupName(), this.getName())), Status.RESTARTING);
     }
 
     @Nullable

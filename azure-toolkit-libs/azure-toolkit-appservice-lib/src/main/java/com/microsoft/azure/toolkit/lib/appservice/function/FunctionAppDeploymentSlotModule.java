@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class FunctionAppDeploymentSlotModule extends AbstractAzResourceModule<FunctionAppDeploymentSlot, FunctionApp, WebSiteBase> {
+public class FunctionAppDeploymentSlotModule extends AbstractAzResourceModule<FunctionAppDeploymentSlot, WebSiteBase> {
 
     public static final String NAME = "slots";
 
@@ -25,7 +25,9 @@ public class FunctionAppDeploymentSlotModule extends AbstractAzResourceModule<Fu
 
     @Override
     public FunctionDeploymentSlots getClient() {
-        return Optional.ofNullable(this.parent.getFullRemote()).map(com.azure.resourcemanager.appservice.models.FunctionApp::deploymentSlots).orElse(null);
+        return Optional.of((FunctionApp) this.parent)
+            .map(FunctionApp::getFullRemote)
+            .map(com.azure.resourcemanager.appservice.models.FunctionApp::deploymentSlots).orElse(null);
     }
 
     @Nonnull

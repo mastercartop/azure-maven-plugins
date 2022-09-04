@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Getter
-public class SpringCloudCluster extends AbstractAzResource<SpringCloudCluster, SpringCloudServiceSubscription, SpringService> {
+public class SpringCloudCluster extends AbstractAzResource<SpringCloudCluster, SpringService> {
 
     @Nonnull
     private final SpringCloudAppModule appModule;
@@ -53,7 +53,7 @@ public class SpringCloudCluster extends AbstractAzResource<SpringCloudCluster, S
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, SpringCloudCluster, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.singletonList(appModule);
     }
 

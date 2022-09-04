@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class PublicIpAddressModule extends AbstractAzResourceModule<PublicIpAddress, NetworkServiceSubscription, com.azure.resourcemanager.network.models.PublicIpAddress> {
+public class PublicIpAddressModule extends AbstractAzResourceModule<PublicIpAddress, com.azure.resourcemanager.network.models.PublicIpAddress> {
 
     public static final String NAME = "publicIPAddresses";
 
@@ -26,7 +26,7 @@ public class PublicIpAddressModule extends AbstractAzResourceModule<PublicIpAddr
 
     @Override
     public PublicIpAddresses getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(NetworkManager::publicIpAddresses).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (NetworkManager) r).map(NetworkManager::publicIpAddresses).orElse(null);
     }
 
     @Nonnull

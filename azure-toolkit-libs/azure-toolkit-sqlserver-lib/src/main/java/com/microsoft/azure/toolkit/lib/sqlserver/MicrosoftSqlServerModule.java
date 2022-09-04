@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
-public class MicrosoftSqlServerModule extends AbstractAzResourceModule<MicrosoftSqlServer, MicrosoftSqlServiceSubscription, SqlServer> {
+public class MicrosoftSqlServerModule extends AbstractAzResourceModule<MicrosoftSqlServer, SqlServer> {
 
     public static final String NAME = "servers";
 
@@ -74,7 +74,7 @@ public class MicrosoftSqlServerModule extends AbstractAzResourceModule<Microsoft
 
     @Override
     public SqlServers getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(SqlServerManager::sqlServers).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (SqlServerManager) r).map(SqlServerManager::sqlServers).orElse(null);
     }
 
     @Nonnull

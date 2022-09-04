@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class AppServicePlanModule extends AbstractAzResourceModule<AppServicePlan, AppServiceServiceSubscription, com.azure.resourcemanager.appservice.models.AppServicePlan> {
+public class AppServicePlanModule extends AbstractAzResourceModule<AppServicePlan, com.azure.resourcemanager.appservice.models.AppServicePlan> {
 
     public static final String NAME = "serverfarms";
 
@@ -26,7 +26,7 @@ public class AppServicePlanModule extends AbstractAzResourceModule<AppServicePla
 
     @Override
     public AppServicePlans getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(AppServiceManager::appServicePlans).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (AppServiceManager) r).map(AppServiceManager::appServicePlans).orElse(null);
     }
 
     @Nonnull

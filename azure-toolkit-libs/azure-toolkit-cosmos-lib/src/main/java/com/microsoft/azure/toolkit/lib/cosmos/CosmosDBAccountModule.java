@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CosmosDBAccountModule extends AbstractAzResourceModule<CosmosDBAccount, CosmosServiceSubscription,
+public class CosmosDBAccountModule extends AbstractAzResourceModule<CosmosDBAccount,
         com.azure.resourcemanager.cosmos.models.CosmosDBAccount> {
     private static final String NAME = "databaseAccounts";
 
@@ -53,7 +53,7 @@ public class CosmosDBAccountModule extends AbstractAzResourceModule<CosmosDBAcco
     @Nullable
     @Override
     public CosmosDBAccounts getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(CosmosManager::databaseAccounts).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (CosmosManager) r).map(CosmosManager::databaseAccounts).orElse(null);
     }
 
     @Nonnull

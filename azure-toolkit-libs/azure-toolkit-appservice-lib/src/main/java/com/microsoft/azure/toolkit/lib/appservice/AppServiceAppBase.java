@@ -55,16 +55,16 @@ import java.util.Optional;
 @Slf4j
 public abstract class AppServiceAppBase<
     T extends AppServiceAppBase<T, P, F>,
-    P extends AbstractAzResource<P, ?, ?>,
+    P extends AbstractAzResource<P, ?>,
     F extends WebAppBase>
-    extends AbstractAzResource<T, P, WebSiteBase> implements Startable, Deletable {
+    extends AbstractAzResource<T, WebSiteBase> implements Startable, Deletable {
     protected AppServiceKuduClient kuduManager;
 
-    protected AppServiceAppBase(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull AbstractAzResourceModule<T, P, WebSiteBase> module) {
+    protected AppServiceAppBase(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull AbstractAzResourceModule<T, WebSiteBase> module) {
         super(name, resourceGroupName, module);
     }
 
-    protected AppServiceAppBase(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, P, WebSiteBase> module) {
+    protected AppServiceAppBase(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, WebSiteBase> module) {
         super(name, module);
     }
 

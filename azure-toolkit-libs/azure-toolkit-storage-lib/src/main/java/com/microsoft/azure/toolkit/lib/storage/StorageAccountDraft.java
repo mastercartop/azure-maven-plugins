@@ -59,7 +59,7 @@ public class StorageAccountDraft extends StorageAccount implements AzResource.Dr
     )
     public com.azure.resourcemanager.storage.models.StorageAccount createResourceInAzure() {
         final String name = this.getName();
-        final StorageManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final StorageManager manager = Objects.requireNonNull(((StorageServiceSubscription) this.getParent()).getRemote());
         com.azure.resourcemanager.storage.models.StorageAccount.DefinitionStages.WithCreate withCreate =
             manager.storageAccounts().define(name)
                 .withRegion(this.getRegion().getName())

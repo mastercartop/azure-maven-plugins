@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class ApplicationInsightsModule extends AbstractAzResourceModule<ApplicationInsight, ApplicationInsightsServiceSubscription, ApplicationInsightsComponent> {
+public class ApplicationInsightsModule extends AbstractAzResourceModule<ApplicationInsight, ApplicationInsightsComponent> {
 
     public static final String NAME = "components";
 
@@ -85,7 +85,7 @@ public class ApplicationInsightsModule extends AbstractAzResourceModule<Applicat
     @Nullable
     @Override
     public Components getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(ApplicationInsightsManager::components).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (ApplicationInsightsManager) r).map(ApplicationInsightsManager::components).orElse(null);
     }
 
     @Nonnull

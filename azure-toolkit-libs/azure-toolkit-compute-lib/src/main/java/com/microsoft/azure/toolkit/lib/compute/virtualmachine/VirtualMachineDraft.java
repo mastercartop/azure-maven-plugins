@@ -20,6 +20,7 @@ import com.microsoft.azure.toolkit.lib.common.model.AzResource;
 import com.microsoft.azure.toolkit.lib.common.model.Region;
 import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 import com.microsoft.azure.toolkit.lib.common.utils.Utils;
+import com.microsoft.azure.toolkit.lib.compute.ComputeServiceSubscription;
 import com.microsoft.azure.toolkit.lib.compute.virtualmachine.model.AuthenticationType;
 import com.microsoft.azure.toolkit.lib.compute.virtualmachine.model.OperatingSystem;
 import com.microsoft.azure.toolkit.lib.compute.virtualmachine.model.SpotConfig;
@@ -152,7 +153,7 @@ public class VirtualMachineDraft extends VirtualMachine implements AzResource.Dr
         type = AzureOperation.Type.SERVICE
     )
     public com.azure.resourcemanager.compute.models.VirtualMachine createResourceInAzure() {
-        final ComputeManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final ComputeManager manager = Objects.requireNonNull(((ComputeServiceSubscription) this.getParent()).getRemote());
         final String name = this.getName();
         //TODO: read from config because `VirtualMachine` doesn't have these methods
         final String availabilitySet = this.getAvailabilitySet();
@@ -196,7 +197,7 @@ public class VirtualMachineDraft extends VirtualMachine implements AzResource.Dr
         final PublicIpAddress ipAddress = this.getIpAddress();
         final NetworkSecurityGroup securityGroup = this.getSecurityGroup();
 
-        final ComputeManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final ComputeManager manager = Objects.requireNonNull(((ComputeServiceSubscription) this.getParent()).getRemote());
         final NetworkInterface.DefinitionStages.WithCreate createNetworkInterface = manager.networkManager().networkInterfaces()
             .define(name + "-interface-" + Utils.getTimestamp())
             .withRegion(region.getName())

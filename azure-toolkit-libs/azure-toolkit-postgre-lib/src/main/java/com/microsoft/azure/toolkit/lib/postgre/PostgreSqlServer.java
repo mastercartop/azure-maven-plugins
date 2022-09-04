@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class PostgreSqlServer extends AbstractAzResource<PostgreSqlServer, PostgreSqlServiceSubscription, Server>
+public class PostgreSqlServer extends AbstractAzResource<PostgreSqlServer, Server>
     implements Deletable, Startable, IDatabaseServer<PostgreSqlDatabase> {
 
     private final PostgreSqlDatabaseModule databaseModule;
@@ -67,7 +67,7 @@ public class PostgreSqlServer extends AbstractAzResource<PostgreSqlServer, Postg
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, PostgreSqlServer, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Arrays.asList(this.firewallRuleModule, this.databaseModule);
     }
 

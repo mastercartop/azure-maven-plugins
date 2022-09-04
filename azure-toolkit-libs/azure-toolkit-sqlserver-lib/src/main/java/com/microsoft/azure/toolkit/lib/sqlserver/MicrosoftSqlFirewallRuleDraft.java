@@ -51,7 +51,7 @@ public class MicrosoftSqlFirewallRuleDraft extends MicrosoftSqlFirewallRule impl
         type = AzureOperation.Type.SERVICE
     )
     public SqlFirewallRule createResourceInAzure() {
-        final SqlServer server = Objects.requireNonNull(this.getParent().getRemote());
+        final SqlServer server = Objects.requireNonNull(((MicrosoftSqlServer) this.getParent()).getRemote());
         SqlFirewallRuleOperations.DefinitionStages.WithCreate withCreate = server.firewallRules().define(this.getName())
             .withIpAddressRange(this.getStartIpAddress(), this.getEndIpAddress());
         final IAzureMessager messager = AzureMessager.getMessager();
@@ -72,7 +72,7 @@ public class MicrosoftSqlFirewallRuleDraft extends MicrosoftSqlFirewallRule impl
         final Optional<String> modifiedStartIp = Optional.ofNullable(this.getStartIpAddress()).filter(n -> !Objects.equals(n, super.getStartIpAddress()));
         final Optional<String> modifiedEndIp = Optional.ofNullable(this.getEndIpAddress()).filter(n -> !Objects.equals(n, super.getEndIpAddress()));
         if (modifiedStartIp.isPresent() || modifiedEndIp.isPresent()) {
-            final MicrosoftSqlServer server = this.getParent();
+            final MicrosoftSqlServer server = (MicrosoftSqlServer) this.getParent();
             final SqlServer manager = Objects.requireNonNull(server.getRemote());
             final SqlFirewallRule.Update update = manager.firewallRules().get(this.getName()).update();
             modifiedStartIp.ifPresent(update::withStartIpAddress);

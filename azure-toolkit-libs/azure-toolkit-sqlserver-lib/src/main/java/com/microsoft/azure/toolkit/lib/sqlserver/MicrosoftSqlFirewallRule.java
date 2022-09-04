@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MicrosoftSqlFirewallRule extends AbstractAzResource<MicrosoftSqlFirewallRule, MicrosoftSqlServer, SqlFirewallRule> implements IFirewallRule {
+public class MicrosoftSqlFirewallRule extends AbstractAzResource<MicrosoftSqlFirewallRule, SqlFirewallRule> implements IFirewallRule {
 
     protected MicrosoftSqlFirewallRule(@Nonnull String name, @Nonnull MicrosoftSqlFirewallRuleModule module) {
         super(name, module);
@@ -34,7 +34,7 @@ public class MicrosoftSqlFirewallRule extends AbstractAzResource<MicrosoftSqlFir
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, MicrosoftSqlFirewallRule, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public interface AzResource<T extends AzResource<T, P, R>, P extends AzResource<P, ?, ?>, R>
+public interface AzResource<T extends AzResource<T, R>, R>
     extends AzResourceBase, Refreshable {
     long CACHE_LIFETIME = 30 * 60 * 1000; // 30 minutes
 
@@ -29,7 +29,7 @@ public interface AzResource<T extends AzResource<T, P, R>, P extends AzResource<
     void refresh();
 
     @Nonnull
-    AzResourceModule<T, P, R> getModule();
+    AzResourceModule<T, R> getModule();
 
     @Nonnull
     String getName();
@@ -50,7 +50,7 @@ public interface AzResource<T extends AzResource<T, P, R>, P extends AzResource<
     }
 
     @Nonnull
-    default P getParent() {
+    default AzResource<?, ?> getParent() {
         return this.getModule().getParent();
     }
 
@@ -102,7 +102,7 @@ public interface AzResource<T extends AzResource<T, P, R>, P extends AzResource<
     // ***** END! TO BE REMOVED ***** //
 
     @Getter
-    final class None extends AbstractAzResource<None, None, Void> {
+    final class None extends AbstractAzResource<None, Void> {
         public static final String NONE = "$NONE$";
         private final String id = NONE;
         private final String name = NONE;
@@ -115,13 +115,13 @@ public interface AzResource<T extends AzResource<T, P, R>, P extends AzResource<
 
         @Nonnull
         @Override
-        public List<AbstractAzResourceModule<?, None, ?>> getSubModules() {
+        public List<AbstractAzResourceModule<?, ?>> getSubModules() {
             return Collections.emptyList();
         }
 
         @Nonnull
         @Override
-        public AbstractAzResourceModule<None, None, Void> getModule() {
+        public AbstractAzResourceModule<None, Void> getModule() {
             return AzResourceModule.NONE;
         }
 
@@ -154,13 +154,13 @@ public interface AzResource<T extends AzResource<T, P, R>, P extends AzResource<
         }
     }
 
-    interface Draft<T extends AzResource<T, ?, R>, R> {
+    interface Draft<T extends AzResource<T, R>, R> {
 
         String getName();
 
         String getResourceGroupName();
 
-        AzResourceModule<T, ?, R> getModule();
+        AzResourceModule<T, R> getModule();
 
         default T commit() {
             synchronized (this) {

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class VirtualMachine extends AbstractAzResource<VirtualMachine, ComputeServiceSubscription, com.azure.resourcemanager.compute.models.VirtualMachine>
+public class VirtualMachine extends AbstractAzResource<VirtualMachine, com.azure.resourcemanager.compute.models.VirtualMachine>
     implements Startable, Deletable {
 
     protected VirtualMachine(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull VirtualMachineModule module) {
@@ -47,7 +47,7 @@ public class VirtualMachine extends AbstractAzResource<VirtualMachine, ComputeSe
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, VirtualMachine, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

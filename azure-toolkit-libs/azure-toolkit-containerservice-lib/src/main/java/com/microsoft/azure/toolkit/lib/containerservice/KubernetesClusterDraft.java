@@ -85,7 +85,7 @@ public class KubernetesClusterDraft extends KubernetesCluster implements
             ((ResourceGroupDraft) resourceGroup).createIfNotExist();
         }
         // Create Kubernetes service
-        final ContainerServiceManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final ContainerServiceManager manager = Objects.requireNonNull(((ContainerServiceSubscription) this.getParent()).getRemote());
         final DefinitionStages.WithCreate withCreate = manager.kubernetesClusters().define(this.getName())
                 .withRegion(region.getName())
                 .withExistingResourceGroup(this.getResourceGroupName())

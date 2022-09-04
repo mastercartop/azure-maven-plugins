@@ -14,8 +14,10 @@ import com.azure.resourcemanager.cosmos.models.MongoDBDatabaseCreateUpdateParame
 import com.azure.resourcemanager.cosmos.models.MongoDBDatabaseResource;
 import com.microsoft.azure.toolkit.lib.common.bundle.AzureString;
 import com.microsoft.azure.toolkit.lib.common.messager.AzureMessager;
+import com.microsoft.azure.toolkit.lib.common.model.AzResource;
 import com.microsoft.azure.toolkit.lib.cosmos.ICosmosDatabaseDraft;
 import com.microsoft.azure.toolkit.lib.cosmos.model.DatabaseConfig;
+import com.microsoft.azure.toolkit.lib.cosmos.sql.SqlCosmosDBAccount;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
@@ -44,9 +46,10 @@ public class MongoDatabaseDraft extends MongoDatabase implements
     @NotNull
     @Override
     public MongoDBDatabaseGetResultsInner createResourceInAzure() {
-        final CosmosDBManagementClient cosmosDBManagementClient = Objects.requireNonNull(getParent().getRemote()).manager().serviceClient();
+        final SqlCosmosDBAccount parent = (SqlCosmosDBAccount) getParent();
+        final CosmosDBManagementClient cosmosDBManagementClient = Objects.requireNonNull(parent.getRemote()).manager().serviceClient();
         final MongoDBDatabaseCreateUpdateParameters parameters = new MongoDBDatabaseCreateUpdateParameters()
-                .withLocation(Objects.requireNonNull(this.getParent().getRegion()).getName())
+                .withLocation(Objects.requireNonNull(parent.getRegion()).getName())
                 .withResource(new MongoDBDatabaseResource().withId(this.getName()));
         final Integer throughput = ensureConfig().getThroughput();
         final Integer maxThroughput = ensureConfig().getMaxThroughput();
@@ -61,7 +64,7 @@ public class MongoDatabaseDraft extends MongoDatabase implements
             parameters.withOptions(options);
         }
         AzureMessager.getMessager().info(AzureString.format("Start creating database({0})...", this.getName()));
-        final MongoDBDatabaseGetResultsInner result = cosmosDBManagementClient.getMongoDBResources().createUpdateMongoDBDatabase(this.getResourceGroupName(), this.getParent().getName(),
+        final MongoDBDatabaseGetResultsInner result = cosmosDBManagementClient.getMongoDBResources().createUpdateMongoDBDatabase(this.getResourceGroupName(), parent.getName(),
                 this.getName(), parameters, Context.NONE);
         AzureMessager.getMessager().success(AzureString.format("Database({0}) is successfully created.", this.getName()));
         return result;

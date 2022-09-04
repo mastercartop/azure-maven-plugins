@@ -90,7 +90,7 @@ public class MySqlServerDraft extends MySqlServer implements AzResource.Draft<My
     )
     public Server createResourceInAzure() {
         assert this.config != null;
-        final MySqlManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final MySqlManager manager = Objects.requireNonNull(((MySqlServiceSubscription) this.getParent()).getRemote());
 
         final ServerPropertiesForDefaultCreate parameters = new ServerPropertiesForDefaultCreate()
             .withAdministratorLogin(this.getAdminName())

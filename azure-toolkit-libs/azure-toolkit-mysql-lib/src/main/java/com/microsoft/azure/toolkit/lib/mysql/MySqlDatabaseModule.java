@@ -9,6 +9,7 @@ import com.azure.resourcemanager.mysql.MySqlManager;
 import com.azure.resourcemanager.mysql.models.Database;
 import com.azure.resourcemanager.mysql.models.Databases;
 import com.azure.resourcemanager.resources.fluentcore.arm.ResourceId;
+import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResource;
 import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResourceModule;
 import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 
@@ -17,7 +18,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class MySqlDatabaseModule extends AbstractAzResourceModule<MySqlDatabase, MySqlServer, Database> {
+public class MySqlDatabaseModule extends AbstractAzResourceModule<MySqlDatabase, Database> {
     public static final String NAME = "databases";
 
     public MySqlDatabaseModule(@Nonnull MySqlServer parent) {
@@ -40,7 +41,7 @@ public class MySqlDatabaseModule extends AbstractAzResourceModule<MySqlDatabase,
     @Override
     @AzureOperation(name = "resource.list_resources.type", params = {"this.getResourceTypeName()"}, type = AzureOperation.Type.SERVICE)
     protected Stream<Database> loadResourcesFromAzure() {
-        final MySqlServer p = this.getParent();
+        final MySqlServer p = (MySqlServer) this.getParent();
         return Optional.ofNullable(this.getClient()).map(c -> c.listByServer(p.getResourceGroupName(), p.getName()).stream()).orElse(Stream.empty());
     }
 
@@ -48,7 +49,7 @@ public class MySqlDatabaseModule extends AbstractAzResourceModule<MySqlDatabase,
     @Override
     @AzureOperation(name = "resource.load_resource.resource|type", params = {"name", "this.getResourceTypeName()"}, type = AzureOperation.Type.SERVICE)
     protected Database loadResourceFromAzure(@Nonnull String name, String resourceGroup) {
-        final MySqlServer p = this.getParent();
+        final MySqlServer p = (MySqlServer) this.getParent();
         return Optional.ofNullable(this.getClient()).map(c -> c.get(p.getResourceGroupName(), p.getName(), name)).orElse(null);
     }
 
@@ -59,7 +60,7 @@ public class MySqlDatabaseModule extends AbstractAzResourceModule<MySqlDatabase,
         type = AzureOperation.Type.SERVICE
     )
     protected void deleteResourceFromAzure(@Nonnull String id) {
-        final MySqlServer p = this.getParent();
+        final MySqlServer p = (MySqlServer) this.getParent();
         final ResourceId resourceId = ResourceId.fromString(id);
         final String name = resourceId.name();
         Optional.ofNullable(this.getClient()).ifPresent(c -> c.delete(p.getResourceGroupName(), p.getName(), name));
@@ -68,7 +69,11 @@ public class MySqlDatabaseModule extends AbstractAzResourceModule<MySqlDatabase,
     @Nullable
     @Override
     protected Databases getClient() {
-        return Optional.ofNullable(this.getParent().getParent().getRemote()).map(MySqlManager::databases).orElse(null);
+        return Optional.of(this.getParent().getParent())
+            .map(p -> ((AbstractAzResource<?, ?>) p))
+            .map(AbstractAzResource::getRemote)
+            .map(r -> ((MySqlManager) r))
+            .map(MySqlManager::databases).orElse(null);
     }
 
     @Nonnull

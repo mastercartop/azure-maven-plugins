@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ResourceDeployment extends AbstractAzResource<ResourceDeployment, ResourceGroup, Deployment> implements Deletable {
+public class ResourceDeployment extends AbstractAzResource<ResourceDeployment, Deployment> implements Deletable {
     private static final String EMPTY_PARAMETER = "{}";
     private static final String[] VALID_PARAMETER_ATTRIBUTES = {"value", "reference", "metadata"};
 
@@ -54,7 +54,7 @@ public class ResourceDeployment extends AbstractAzResource<ResourceDeployment, R
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, ResourceDeployment, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

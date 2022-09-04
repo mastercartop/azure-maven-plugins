@@ -109,7 +109,7 @@ public class SpringCloudDeploymentDraft extends SpringCloudDeployment
     )
     public SpringAppDeployment createResourceInAzure() {
         final String name = this.getName();
-        final SpringApp app = Objects.requireNonNull(this.getParent().getRemote());
+        final SpringApp app = Objects.requireNonNull(((SpringCloudApp) this.getParent()).getRemote());
         final SpringAppDeploymentImpl create = ((SpringAppDeploymentImpl) app.deployments().define(name));
         create.withExistingSource(UserSourceType.JAR, "<default>");
         modify(create);

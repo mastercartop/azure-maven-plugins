@@ -43,7 +43,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, P extends AbstractAzResource<P, ?, ?>, R> implements AzResource<T, P, R> {
+public abstract class AbstractAzResource<T extends AbstractAzResource<T, R>, R> implements AzResource<T, R> {
     @Nonnull
     @Getter
     @ToString.Include
@@ -57,7 +57,7 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
     @Nonnull
     @Getter
     @EqualsAndHashCode.Include
-    private final AbstractAzResourceModule<T, P, R> module;
+    private final AbstractAzResourceModule<T, R> module;
     @Nonnull
     @ToString.Include
     private final AtomicLong syncTimeRef; // 0:loading, <0:invalidated
@@ -70,7 +70,7 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
     private final Debouncer fireEvents = new TailingDebouncer(this::fireStatusChangedEvent, 300);
     private final Lock lock = new ReentrantLock();
 
-    protected AbstractAzResource(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull AbstractAzResourceModule<T, P, R> module) {
+    protected AbstractAzResource(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull AbstractAzResourceModule<T, R> module) {
         this.name = name;
         this.resourceGroupName = resourceGroupName;
         this.module = module;
@@ -84,14 +84,14 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
      * {@link AbstractAzResource#getResourceGroupName() module.getParent().getResourceGroupName()} is only reliable
      * if current resource is not root of resource hierarchy tree.
      */
-    protected AbstractAzResource(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, P, R> module) {
+    protected AbstractAzResource(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, R> module) {
         this(name, module.getParent().getResourceGroupName(), module);
     }
 
     /**
      * copy constructor
      */
-    protected AbstractAzResource(@Nonnull AbstractAzResource<T, P, R> origin) {
+    protected AbstractAzResource(@Nonnull AbstractAzResource<T, R> origin) {
         this.name = origin.getName();
         this.resourceGroupName = origin.getResourceGroupName();
         this.module = origin.getModule();
@@ -101,7 +101,7 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
     }
 
     public boolean exists() {
-        final P parent = this.getParent();
+        final AzResource<?, ?> parent = this.getParent();
         if (StringUtils.equals(this.statusRef.get(), Status.DELETED)) {
             return false;
         } else if (parent == AzResource.NONE || this instanceof AbstractAzServiceSubscription || this instanceof ResourceGroup) {
@@ -407,7 +407,7 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
     }
 
     @Nonnull
-    public abstract List<AbstractAzResourceModule<?, T, ?>> getSubModules();
+    public abstract List<AbstractAzResourceModule<?, ?>> getSubModules();
 
     @Nonnull
     public abstract String loadStatus(@Nonnull R remote);
@@ -424,7 +424,7 @@ public abstract class AbstractAzResource<T extends AbstractAzResource<T, P, R>, 
     }
 
     @Nullable
-    public AbstractAzResourceModule<?, T, ?> getSubModule(String moduleName) {
+    public AbstractAzResourceModule<?, ?> getSubModule(String moduleName) {
         return this.getSubModules().stream().filter(m -> m.getName().equalsIgnoreCase(moduleName)).findAny().orElse(null);
     }
 

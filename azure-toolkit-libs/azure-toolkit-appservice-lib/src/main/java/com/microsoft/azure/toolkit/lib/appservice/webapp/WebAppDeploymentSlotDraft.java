@@ -96,7 +96,7 @@ public class WebAppDeploymentSlotDraft extends WebAppDeploymentSlot implements A
         // Using configuration from parent by default
         final String source = StringUtils.isBlank(newConfigurationSource) ? CONFIGURATION_SOURCE_PARENT : StringUtils.lowerCase(newConfigurationSource);
 
-        final WebApp webApp = Objects.requireNonNull(this.getParent().getFullRemote());
+        final WebApp webApp = Objects.requireNonNull(((com.microsoft.azure.toolkit.lib.appservice.webapp.WebApp) this.getParent()).getFullRemote());
         final DeploymentSlot.DefinitionStages.Blank blank = webApp.deploymentSlots().define(getName());
         final DeploymentSlot.DefinitionStages.WithCreate withCreate;
         if (CONFIGURATION_SOURCE_NEW.equals(source)) {

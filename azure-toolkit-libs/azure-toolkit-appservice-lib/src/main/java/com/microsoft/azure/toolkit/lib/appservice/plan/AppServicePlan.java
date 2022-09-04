@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
-public class AppServicePlan extends AbstractAzResource<AppServicePlan, AppServiceServiceSubscription, com.azure.resourcemanager.appservice.models.AppServicePlan>
+public class AppServicePlan extends AbstractAzResource<AppServicePlan, com.azure.resourcemanager.appservice.models.AppServicePlan>
     implements Deletable {
 
     protected AppServicePlan(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull AppServicePlanModule module) {
@@ -50,7 +50,7 @@ public class AppServicePlan extends AbstractAzResource<AppServicePlan, AppServic
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, AppServicePlan, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

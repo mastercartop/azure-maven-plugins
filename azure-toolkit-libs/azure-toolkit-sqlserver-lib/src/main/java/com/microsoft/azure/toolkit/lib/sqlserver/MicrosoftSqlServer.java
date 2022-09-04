@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-public class MicrosoftSqlServer extends AbstractAzResource<MicrosoftSqlServer, MicrosoftSqlServiceSubscription, SqlServer>
+public class MicrosoftSqlServer extends AbstractAzResource<MicrosoftSqlServer, SqlServer>
     implements Deletable, IDatabaseServer<MicrosoftSqlDatabase> {
 
     @Nonnull
@@ -55,7 +55,7 @@ public class MicrosoftSqlServer extends AbstractAzResource<MicrosoftSqlServer, M
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, MicrosoftSqlServer, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Arrays.asList(this.firewallRuleModule, this.databaseModule);
     }
 

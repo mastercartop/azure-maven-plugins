@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ResourceGroup extends AbstractAzResource<ResourceGroup, ResourcesServiceSubscription, com.azure.resourcemanager.resources.models.ResourceGroup>
+public class ResourceGroup extends AbstractAzResource<ResourceGroup, com.azure.resourcemanager.resources.models.ResourceGroup>
     implements Deletable {
 
     private final ResourceDeploymentModule deploymentModule;
@@ -53,13 +53,13 @@ public class ResourceGroup extends AbstractAzResource<ResourceGroup, ResourcesSe
         // ResourceGroup.refresh() doesn't work:
         // com.azure.core.management.exception.ManagementException: Status code 404,
         // "{"error":{"code":"ResourceGroupNotFound","message":"Resource group '${UUID}' could not be found."}}": Resource group '${UUID}' could not be found.
-        final ResourceManager manager = Objects.requireNonNull(this.getParent().getRemote());
-        return manager.resourceGroups().getByName(this.getName());
+        final ResourceManager manager = (ResourceManager) ((AbstractAzResource<?, ?>) this.getParent()).getRemote();
+        return Objects.requireNonNull(manager).resourceGroups().getByName(this.getName());
     }
 
     @Override
     public void delete() {
-        final List<? extends AbstractAzResource<?, ?, ?>> localResources = this.genericResources().listCachedResources().stream()
+        final List<? extends AbstractAzResource<?, ?>> localResources = this.genericResources().listCachedResources().stream()
             .map(GenericResource::toConcreteResource)
             .filter(r -> !(r instanceof GenericResource)).collect(Collectors.toList());
         localResources.forEach(r -> r.setStatus(Status.DELETING));
@@ -74,7 +74,7 @@ public class ResourceGroup extends AbstractAzResource<ResourceGroup, ResourcesSe
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, ResourceGroup, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Arrays.asList(deploymentModule, resourceModule);
     }
 

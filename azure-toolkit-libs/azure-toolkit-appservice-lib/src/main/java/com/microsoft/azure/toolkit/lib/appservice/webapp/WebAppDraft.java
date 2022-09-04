@@ -10,6 +10,7 @@ import com.azure.resourcemanager.appservice.models.WebApp.DefinitionStages;
 import com.azure.resourcemanager.appservice.models.WebApp.Update;
 import com.azure.resourcemanager.appservice.models.WebApp.UpdateStages;
 import com.azure.resourcemanager.appservice.models.WebSiteBase;
+import com.microsoft.azure.toolkit.lib.appservice.AppServiceServiceSubscription;
 import com.microsoft.azure.toolkit.lib.appservice.model.DiagnosticConfig;
 import com.microsoft.azure.toolkit.lib.appservice.model.DockerConfiguration;
 import com.microsoft.azure.toolkit.lib.appservice.model.OperatingSystem;
@@ -85,7 +86,7 @@ public class WebAppDraft extends WebApp implements AzResource.Draft<WebApp, WebS
         final Map<String, String> newAppSettings = getAppSettings();
         final DiagnosticConfig newDiagnosticConfig = getDiagnosticConfig();
 
-        final AppServiceManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final AppServiceManager manager = Objects.requireNonNull(((AppServiceServiceSubscription) this.getParent()).getRemote());
         final DefinitionStages.Blank blank = manager.webApps().define(name);
         final DefinitionStages.WithCreate withCreate;
         if (newRuntime.getOperatingSystem() == OperatingSystem.LINUX) {

@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class MySqlFirewallRuleModule extends AbstractAzResourceModule<MySqlFirewallRule, MySqlServer, FirewallRule> {
+public class MySqlFirewallRuleModule extends AbstractAzResourceModule<MySqlFirewallRule, FirewallRule> {
     public static final String NAME = "firewallRules";
 
     public MySqlFirewallRuleModule(@Nonnull MySqlServer parent) {
@@ -43,7 +43,7 @@ public class MySqlFirewallRuleModule extends AbstractAzResourceModule<MySqlFirew
     @Override
     @AzureOperation(name = "resource.list_resources.type", params = {"this.getResourceTypeName()"}, type = AzureOperation.Type.SERVICE)
     protected Stream<FirewallRule> loadResourcesFromAzure() {
-        final MySqlServer p = this.getParent();
+        final MySqlServer p = (MySqlServer) this.getParent();
         return Optional.ofNullable(this.getClient()).map(c -> c.listByServer(p.getResourceGroupName(), p.getName()).stream()).orElse(Stream.empty());
     }
 
@@ -51,7 +51,7 @@ public class MySqlFirewallRuleModule extends AbstractAzResourceModule<MySqlFirew
     @Override
     @AzureOperation(name = "resource.load_resource.resource|type", params = {"name", "this.getResourceTypeName()"}, type = AzureOperation.Type.SERVICE)
     protected FirewallRule loadResourceFromAzure(@Nonnull String name, String resourceGroup) {
-        final MySqlServer p = this.getParent();
+        final MySqlServer p = (MySqlServer) this.getParent();
         return Optional.ofNullable(this.getClient()).map(c -> c.get(p.getResourceGroupName(), p.getName(), name)).orElse(null);
     }
 
@@ -62,7 +62,7 @@ public class MySqlFirewallRuleModule extends AbstractAzResourceModule<MySqlFirew
         type = AzureOperation.Type.SERVICE
     )
     protected void deleteResourceFromAzure(@Nonnull String id) {
-        final MySqlServer p = this.getParent();
+        final MySqlServer p = (MySqlServer) this.getParent();
         final ResourceId resourceId = ResourceId.fromString(id);
         final String name = resourceId.name();
         Optional.ofNullable(this.getClient()).ifPresent(c -> c.delete(p.getResourceGroupName(), p.getName(), name));
@@ -89,7 +89,8 @@ public class MySqlFirewallRuleModule extends AbstractAzResourceModule<MySqlFirew
     @Nullable
     @Override
     protected FirewallRules getClient() {
-        return Optional.ofNullable(this.getParent().getParent().getRemote()).map(MySqlManager::firewallRules).orElse(null);
+        return Optional.ofNullable(((MySqlServiceSubscription) this.getParent().getParent()).getRemote())
+            .map(MySqlManager::firewallRules).orElse(null);
     }
 
     void toggleAzureServiceAccess(boolean allowed) {
@@ -109,13 +110,14 @@ public class MySqlFirewallRuleModule extends AbstractAzResourceModule<MySqlFirew
 
     void toggleLocalMachineAccess(boolean allowed) {
         final String ruleName = IFirewallRule.getLocalMachineAccessRuleName();
-        final String rgName = this.getParent().getResourceGroupName();
+        final MySqlServer parent = (MySqlServer) this.getParent();
+        final String rgName = parent.getResourceGroupName();
         final boolean exists = this.exists(ruleName, rgName);
         if (!allowed && exists) {
             this.delete(ruleName, rgName);
         }
         if (allowed && !exists) {
-            final String publicIp = this.getParent().getLocalMachinePublicIp();
+            final String publicIp = parent.getLocalMachinePublicIp();
             Preconditions.checkArgument(StringUtils.isNotBlank(publicIp),
                 "Cannot enable local machine access to MySQL server due to error: cannot get public ip.");
             final MySqlFirewallRuleDraft draft = this.updateOrCreate(ruleName, rgName);

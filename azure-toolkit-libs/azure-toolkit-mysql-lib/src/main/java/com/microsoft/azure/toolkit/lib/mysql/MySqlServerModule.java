@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
-public class MySqlServerModule extends AbstractAzResourceModule<MySqlServer, MySqlServiceSubscription, Server> {
+public class MySqlServerModule extends AbstractAzResourceModule<MySqlServer, Server> {
 
     public static final String NAME = "servers";
 
@@ -76,7 +76,7 @@ public class MySqlServerModule extends AbstractAzResourceModule<MySqlServer, MyS
     @Nullable
     @Override
     public Servers getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(MySqlManager::servers).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (MySqlManager) r).map(MySqlManager::servers).orElse(null);
     }
 
     @Nonnull

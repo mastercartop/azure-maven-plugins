@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class NetworkModule extends AbstractAzResourceModule<Network, NetworkServiceSubscription, com.azure.resourcemanager.network.models.Network> {
+public class NetworkModule extends AbstractAzResourceModule<Network, com.azure.resourcemanager.network.models.Network> {
 
     public static final String NAME = "virtualNetworks";
 
@@ -26,7 +26,7 @@ public class NetworkModule extends AbstractAzResourceModule<Network, NetworkServ
 
     @Override
     public Networks getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(NetworkManager::networks).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (NetworkManager) r).map(NetworkManager::networks).orElse(null);
     }
 
     @Nonnull

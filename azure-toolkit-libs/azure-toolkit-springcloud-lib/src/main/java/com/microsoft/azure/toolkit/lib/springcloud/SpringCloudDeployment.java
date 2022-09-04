@@ -35,7 +35,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class SpringCloudDeployment extends AbstractAzResource<SpringCloudDeployment, SpringCloudApp, SpringAppDeployment> {
+public class SpringCloudDeployment extends AbstractAzResource<SpringCloudDeployment, SpringAppDeployment> {
 
     protected SpringCloudDeployment(@Nonnull String name, @Nonnull SpringCloudDeploymentModule module) {
         super(name, module);
@@ -79,7 +79,7 @@ public class SpringCloudDeployment extends AbstractAzResource<SpringCloudDeploym
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, SpringCloudDeployment, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 
@@ -93,7 +93,8 @@ public class SpringCloudDeployment extends AbstractAzResource<SpringCloudDeploym
     @SneakyThrows
     public Flux<String> streamLogs(final String instance, int sinceSeconds, int tailLines, int limitBytes, boolean follow) {
         final HttpClient client = HttpClient.create().keepAlive(true);
-        final URIBuilder endpoint = new URIBuilder(this.getParent().getLogStreamingEndpoint(instance));
+        final SpringCloudApp parent = (SpringCloudApp) this.getParent();
+        final URIBuilder endpoint = new URIBuilder(parent.getLogStreamingEndpoint(instance));
         endpoint.addParameter("follow", String.valueOf(follow));
         if (sinceSeconds > 0) {
             endpoint.addParameter("sinceSeconds", String.valueOf(sinceSeconds));
@@ -104,7 +105,7 @@ public class SpringCloudDeployment extends AbstractAzResource<SpringCloudDeploym
         if (limitBytes > 0) {
             endpoint.addParameter("limitBytes", String.valueOf(limitBytes));
         }
-        final String password = this.getParent().getParent().getTestKey();
+        final String password = ((SpringCloudCluster) parent.getParent()).getTestKey();
         final String userPass = "primary:" + password;
         final String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userPass.getBytes()));
         final Consumer<? super HttpHeaders> headerBuilder = header -> header.set("Authorization", basicAuth);
@@ -165,7 +166,8 @@ public class SpringCloudDeployment extends AbstractAzResource<SpringCloudDeploym
             .map(DeploymentSettings::environmentVariables)
             .map(v -> {
                 final HashMap<String, String> variables = new HashMap<>(v);
-                if (this.getParent().getParent().isEnterpriseTier() && StringUtils.isBlank(variables.get("JAVA_OPTS"))) {
+                final SpringCloudCluster cluster = (SpringCloudCluster) this.getParent().getParent();
+                if (cluster.isEnterpriseTier() && StringUtils.isBlank(variables.get("JAVA_OPTS"))) {
                     // jvmOptions are part of environment variables in enterprise tier.
                     // refer to `com.azure.resourcemanager.appplatform.implementation.SpringAppDeploymentImpl.jvmOptions`
                     variables.remove("JAVA_OPTS");

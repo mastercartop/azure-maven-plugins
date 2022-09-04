@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class RedisCache extends AbstractAzResource<RedisCache, RedisServiceSubscription, com.azure.resourcemanager.redis.models.RedisCache>
+public class RedisCache extends AbstractAzResource<RedisCache, com.azure.resourcemanager.redis.models.RedisCache>
     implements Deletable {
     private static final int JEDIS_TIMEOUT = 500;
 
@@ -59,7 +59,7 @@ public class RedisCache extends AbstractAzResource<RedisCache, RedisServiceSubsc
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, RedisCache, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class SpringCloudDeploymentModule extends AbstractAzResourceModule<SpringCloudDeployment, SpringCloudApp, SpringAppDeployment> {
+public class SpringCloudDeploymentModule extends AbstractAzResourceModule<SpringCloudDeployment, SpringAppDeployment> {
 
     public static final String NAME = "deployments";
 
@@ -25,7 +25,7 @@ public class SpringCloudDeploymentModule extends AbstractAzResourceModule<Spring
 
     @Override
     public SpringAppDeployments<?> getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(SpringApp::deployments).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (SpringApp) r).map(SpringApp::deployments).orElse(null);
     }
 
     @Nonnull

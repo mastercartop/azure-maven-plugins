@@ -91,7 +91,7 @@ public class DeployMojo extends AbstractMojoBase {
             }
         }
         printStatus(deployment);
-        printPublicUrl(deployment.getParent());
+        printPublicUrl((SpringCloudApp) deployment.getParent());
     }
 
     protected boolean confirm(List<AzureTask<?>> tasks) throws MojoFailureException {

@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ResourceGroupModule extends AbstractAzResourceModule<ResourceGroup, ResourcesServiceSubscription, com.azure.resourcemanager.resources.models.ResourceGroup> {
+public class ResourceGroupModule extends AbstractAzResourceModule<ResourceGroup, com.azure.resourcemanager.resources.models.ResourceGroup> {
 
     public static final String NAME = "resourceGroups";
 
@@ -48,7 +48,7 @@ public class ResourceGroupModule extends AbstractAzResourceModule<ResourceGroup,
     @Override
     @Nullable
     public ResourceGroups getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(ResourceManager::resourceGroups).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (ResourceManager) r).map(ResourceManager::resourceGroups).orElse(null);
     }
 
     public boolean exists(String resourceName) {

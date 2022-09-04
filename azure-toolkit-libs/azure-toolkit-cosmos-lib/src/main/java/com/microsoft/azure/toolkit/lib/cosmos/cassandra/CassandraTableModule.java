@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class CassandraTableModule extends AbstractAzResourceModule<CassandraTable, CassandraKeyspace, CassandraTableGetResultsInner> {
+public class CassandraTableModule extends AbstractAzResourceModule<CassandraTable, CassandraTableGetResultsInner> {
     private static final String NAME = "tables";
 
     public CassandraTableModule(@NotNull CassandraKeyspace parent) {

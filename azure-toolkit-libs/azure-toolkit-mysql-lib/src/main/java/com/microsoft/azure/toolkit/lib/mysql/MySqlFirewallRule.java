@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MySqlFirewallRule extends AbstractAzResource<MySqlFirewallRule, MySqlServer, FirewallRule> implements IFirewallRule {
+public class MySqlFirewallRule extends AbstractAzResource<MySqlFirewallRule, FirewallRule> implements IFirewallRule {
 
     protected MySqlFirewallRule(@Nonnull String name, @Nonnull MySqlFirewallRuleModule module) {
         super(name, module);
@@ -40,7 +40,7 @@ public class MySqlFirewallRule extends AbstractAzResource<MySqlFirewallRule, MyS
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, MySqlFirewallRule, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

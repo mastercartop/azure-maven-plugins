@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class KubernetesClusterAgentPool extends AbstractAzResource<KubernetesClusterAgentPool, KubernetesCluster,
+public class KubernetesClusterAgentPool extends AbstractAzResource<KubernetesClusterAgentPool,
         com.azure.resourcemanager.containerservice.models.KubernetesClusterAgentPool> implements Deletable {
 
     protected KubernetesClusterAgentPool(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull KubernetesClusterAgentPoolModule module) {
@@ -62,7 +62,7 @@ public class KubernetesClusterAgentPool extends AbstractAzResource<KubernetesClu
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, KubernetesClusterAgentPool, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

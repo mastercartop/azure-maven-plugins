@@ -90,7 +90,7 @@ public class PostgreSqlServerDraft extends PostgreSqlServer implements AzResourc
     )
     public Server createResourceInAzure() {
         assert this.config != null;
-        final PostgreSqlManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final PostgreSqlManager manager = Objects.requireNonNull(((PostgreSqlServiceSubscription) this.getParent()).getRemote());
 
         final ServerPropertiesForDefaultCreate parameters = new ServerPropertiesForDefaultCreate()
             .withAdministratorLogin(this.getAdminName())

@@ -18,13 +18,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class GenericResource extends AbstractAzResource<GenericResource, ResourceGroup, HasId> {
+public class GenericResource extends AbstractAzResource<GenericResource, HasId> {
 
     @Nonnull
     @Getter
     private final ResourceId resourceId;
     @Nullable
-    private AbstractAzResource<?, ?, ?> concrete;
+    private AbstractAzResource<?, ?> concrete;
 
     protected GenericResource(@Nonnull String resourceId, @Nonnull GenericResourceModule module) {
         super(resourceId, ResourceId.fromString(resourceId).resourceGroupName(), module);
@@ -44,12 +44,12 @@ public class GenericResource extends AbstractAzResource<GenericResource, Resourc
         this.resourceId = ResourceId.fromString(remote.id());
     }
 
-    protected GenericResource(@Nonnull AbstractAzResource<?, ?, ?> concrete, @Nonnull GenericResourceModule module) {
+    protected GenericResource(@Nonnull AbstractAzResource<?, ?> concrete, @Nonnull GenericResourceModule module) {
         this(concrete::getId, module);
         this.concrete = concrete;
     }
 
-    public synchronized AbstractAzResource<?, ?, ?> toConcreteResource() {
+    public synchronized AbstractAzResource<?, ?> toConcreteResource() {
         if (Objects.isNull(this.concrete)) {
             this.concrete = Azure.az().getOrInitById(this.resourceId.id());
         }
@@ -64,7 +64,7 @@ public class GenericResource extends AbstractAzResource<GenericResource, Resourc
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, GenericResource, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 
@@ -83,7 +83,7 @@ public class GenericResource extends AbstractAzResource<GenericResource, Resourc
     @Nonnull
     @Override
     public String getStatus() {
-        final AbstractAzResource<?, ?, ?> concrete = this.toConcreteResource();
+        final AbstractAzResource<?, ?> concrete = this.toConcreteResource();
         return concrete instanceof GenericResource ? Status.UNKNOWN : concrete.getStatus();
     }
 

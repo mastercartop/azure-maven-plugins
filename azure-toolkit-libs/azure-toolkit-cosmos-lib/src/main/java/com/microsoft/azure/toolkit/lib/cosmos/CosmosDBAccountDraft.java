@@ -52,7 +52,7 @@ public class CosmosDBAccountDraft extends CosmosDBAccount implements
     @NotNull
     @Override
     public com.azure.resourcemanager.cosmos.models.CosmosDBAccount createResourceInAzure() {
-        final CosmosManager remote = this.getParent().getRemote();
+        final CosmosManager remote = ((CosmosServiceSubscription) this.getParent()).getRemote();
         final DatabaseAccountKind kind = Objects.requireNonNull(getKind(), "'kind' is required to create Azure Cosmos DB account");
         final Region region = Objects.requireNonNull(getRegion(), "'region' is required to create Azure Cosmos DB account");
         final WithKind withKind = Objects.requireNonNull(remote).databaseAccounts().define(this.getName())

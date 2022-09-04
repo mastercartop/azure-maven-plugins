@@ -14,6 +14,7 @@ import com.azure.resourcemanager.cosmos.models.CassandraKeyspaceResource;
 import com.azure.resourcemanager.cosmos.models.CreateUpdateOptions;
 import com.microsoft.azure.toolkit.lib.common.bundle.AzureString;
 import com.microsoft.azure.toolkit.lib.common.messager.AzureMessager;
+import com.microsoft.azure.toolkit.lib.common.model.AzResource;
 import com.microsoft.azure.toolkit.lib.cosmos.ICosmosDatabaseDraft;
 import com.microsoft.azure.toolkit.lib.cosmos.model.DatabaseConfig;
 import lombok.Getter;
@@ -44,9 +45,10 @@ public class CassandraKeyspaceDraft extends CassandraKeyspace implements
     @NotNull
     @Override
     public CassandraKeyspaceGetResultsInner createResourceInAzure() {
-        final CosmosDBManagementClient cosmosDBManagementClient = Objects.requireNonNull(getParent().getRemote()).manager().serviceClient();
+        final CassandraCosmosDBAccount parent = (CassandraCosmosDBAccount) getParent();
+        final CosmosDBManagementClient cosmosDBManagementClient = Objects.requireNonNull(parent.getRemote()).manager().serviceClient();
         final CassandraKeyspaceCreateUpdateParameters parameters = new CassandraKeyspaceCreateUpdateParameters()
-                .withLocation(Objects.requireNonNull(this.getParent().getRegion()).getName())
+                .withLocation(Objects.requireNonNull(parent.getRegion()).getName())
                 .withResource(new CassandraKeyspaceResource().withId(this.getName()));
         final Integer throughput = ensureConfig().getThroughput();
         final Integer maxThroughput = ensureConfig().getMaxThroughput();
@@ -61,7 +63,7 @@ public class CassandraKeyspaceDraft extends CassandraKeyspace implements
             parameters.withOptions(options);
         }
         AzureMessager.getMessager().info(AzureString.format("Start creating keyspace({0})...", this.getName()));
-        final CassandraKeyspaceGetResultsInner result = cosmosDBManagementClient.getCassandraResources().createUpdateCassandraKeyspace(this.getResourceGroupName(), this.getParent().getName(),
+        final CassandraKeyspaceGetResultsInner result = cosmosDBManagementClient.getCassandraResources().createUpdateCassandraKeyspace(this.getResourceGroupName(), parent.getName(),
                 this.getName(), parameters, Context.NONE);
         AzureMessager.getMessager().success(AzureString.format("Keyspace({0}) is successfully created.", this.getName()));
         return result;

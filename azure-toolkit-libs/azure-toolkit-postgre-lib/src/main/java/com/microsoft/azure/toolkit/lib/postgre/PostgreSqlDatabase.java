@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class PostgreSqlDatabase extends AbstractAzResource<PostgreSqlDatabase, PostgreSqlServer, Database> implements IDatabase {
+public class PostgreSqlDatabase extends AbstractAzResource<PostgreSqlDatabase, Database> implements IDatabase {
 
     protected PostgreSqlDatabase(@Nonnull String name, @Nonnull PostgreSqlDatabaseModule module) {
         super(name, module);
@@ -34,7 +34,7 @@ public class PostgreSqlDatabase extends AbstractAzResource<PostgreSqlDatabase, P
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, PostgreSqlDatabase, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 
@@ -52,7 +52,7 @@ public class PostgreSqlDatabase extends AbstractAzResource<PostgreSqlDatabase, P
     @Nonnull
     @Override
     public PostgreSqlServer getServer() {
-        return this.getParent();
+        return (PostgreSqlServer) this.getParent();
     }
 
     @Nullable
@@ -62,6 +62,6 @@ public class PostgreSqlDatabase extends AbstractAzResource<PostgreSqlDatabase, P
 
     @Nonnull
     public JdbcUrl getJdbcUrl() {
-        return JdbcUrl.postgre(this.getParent().getFullyQualifiedDomainName(), this.getName());
+        return JdbcUrl.postgre(this.getServer().getFullyQualifiedDomainName(), this.getName());
     }
 }

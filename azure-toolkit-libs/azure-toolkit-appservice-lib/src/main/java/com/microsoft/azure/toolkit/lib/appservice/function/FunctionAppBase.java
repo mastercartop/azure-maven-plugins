@@ -34,17 +34,17 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Optional;
 
-public abstract class FunctionAppBase<T extends FunctionAppBase<T, P, F>, P extends AbstractAzResource<P, ?, ?>, F extends WebAppBase>
+public abstract class FunctionAppBase<T extends FunctionAppBase<T, P, F>, P extends AbstractAzResource<P, ?>, F extends WebAppBase>
     extends AppServiceAppBase<T, P, F> {
     private static final String FUNCTION_DEPLOY_TYPE = "functionDeployType";
 
     private AzureFunctionsFileClient fileClient;
 
-    protected FunctionAppBase(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull AbstractAzResourceModule<T, P, WebSiteBase> module) {
+    protected FunctionAppBase(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull AbstractAzResourceModule<T, WebSiteBase> module) {
         super(name, resourceGroupName, module);
     }
 
-    protected FunctionAppBase(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, P, WebSiteBase> module) {
+    protected FunctionAppBase(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, WebSiteBase> module) {
         super(name, module);
     }
 

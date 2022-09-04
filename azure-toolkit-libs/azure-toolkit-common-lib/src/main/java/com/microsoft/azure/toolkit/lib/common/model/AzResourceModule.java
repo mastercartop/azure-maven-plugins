@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public interface AzResourceModule<T extends AzResource<T, P, R>, P extends AzResource<P, ?, ?>, R> extends Refreshable {
+public interface AzResourceModule<T extends AzResource<T, R>, R> extends Refreshable {
     @Nonnull
     None NONE = new None();
 
@@ -59,7 +59,7 @@ public interface AzResourceModule<T extends AzResource<T, P, R>, P extends AzRes
     }
 
     @Nonnull
-    P getParent();
+    AzResource<?, ?> getParent();
 
     @Nonnull
     default String getSubscriptionId() {
@@ -72,7 +72,7 @@ public interface AzResourceModule<T extends AzResource<T, P, R>, P extends AzRes
     }
 
     @Getter
-    final class None extends AbstractAzResourceModule<AzResource.None, AzResource.None, Void> {
+    final class None extends AbstractAzResourceModule<AzResource.None, Void> {
         public None() {
             super(AzResource.None.NONE, AzResource.NONE);
         }

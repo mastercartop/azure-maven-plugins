@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class SqlDatabase extends AbstractAzResource<SqlDatabase, CosmosDBAccount, SqlDatabaseGetResultsInner> implements Deletable, ICosmosDatabase {
+public class SqlDatabase extends AbstractAzResource<SqlDatabase, SqlDatabaseGetResultsInner> implements Deletable, ICosmosDatabase {
 
     private SqlContainerModule containerModule;
 
@@ -39,7 +39,7 @@ public class SqlDatabase extends AbstractAzResource<SqlDatabase, CosmosDBAccount
 
     @NotNull
     @Override
-    public List<AbstractAzResourceModule<?, SqlDatabase, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.singletonList(containerModule);
     }
 

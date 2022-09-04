@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class AzureContainerRegistryModule extends AbstractAzResourceModule<ContainerRegistry, AzureContainerRegistryServiceSubscription, Registry> {
+public class AzureContainerRegistryModule extends AbstractAzResourceModule<ContainerRegistry, Registry> {
 
     public static final String NAME = "registries";
 
@@ -75,7 +75,7 @@ public class AzureContainerRegistryModule extends AbstractAzResourceModule<Conta
 
     @Override
     public Registries getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(ContainerRegistryManager::containerRegistries).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (ContainerRegistryManager) r).map(ContainerRegistryManager::containerRegistries).orElse(null);
     }
 
     @Nonnull

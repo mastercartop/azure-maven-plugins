@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class NetworkSecurityGroupModule extends AbstractAzResourceModule<NetworkSecurityGroup, NetworkServiceSubscription, com.azure.resourcemanager.network.models.NetworkSecurityGroup> {
+public class NetworkSecurityGroupModule extends AbstractAzResourceModule<NetworkSecurityGroup, com.azure.resourcemanager.network.models.NetworkSecurityGroup> {
 
     public static final String NAME = "networkSecurityGroups";
 
@@ -26,7 +26,7 @@ public class NetworkSecurityGroupModule extends AbstractAzResourceModule<Network
 
     @Override
     public NetworkSecurityGroups getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(NetworkManager::networkSecurityGroups).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (NetworkManager) r).map(NetworkManager::networkSecurityGroups).orElse(null);
     }
 
     @Nonnull

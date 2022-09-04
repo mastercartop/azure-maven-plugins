@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class VirtualMachineModule extends AbstractAzResourceModule<VirtualMachine, ComputeServiceSubscription, com.azure.resourcemanager.compute.models.VirtualMachine> {
+public class VirtualMachineModule extends AbstractAzResourceModule<VirtualMachine, com.azure.resourcemanager.compute.models.VirtualMachine> {
 
     public static final String NAME = "virtualMachines";
 
@@ -26,7 +26,7 @@ public class VirtualMachineModule extends AbstractAzResourceModule<VirtualMachin
 
     @Override
     public VirtualMachines getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(ComputeManager::virtualMachines).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (ComputeManager) r).map(ComputeManager::virtualMachines).orElse(null);
     }
 
     @Nonnull

@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class PostgreSqlServerModule extends AbstractAzResourceModule<PostgreSqlServer, PostgreSqlServiceSubscription, Server> {
+public class PostgreSqlServerModule extends AbstractAzResourceModule<PostgreSqlServer, Server> {
 
     public static final String NAME = "servers";
 
@@ -73,7 +73,7 @@ public class PostgreSqlServerModule extends AbstractAzResourceModule<PostgreSqlS
     @Nullable
     @Override
     public Servers getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(PostgreSqlManager::servers).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (PostgreSqlManager) r).map(PostgreSqlManager::servers).orElse(null);
     }
 
     @Nonnull

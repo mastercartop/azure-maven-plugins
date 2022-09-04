@@ -14,6 +14,7 @@ import com.microsoft.azure.toolkit.lib.common.model.AzResource;
 import com.microsoft.azure.toolkit.lib.common.model.Region;
 import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 import com.microsoft.azure.toolkit.lib.common.utils.Utils;
+import com.microsoft.azure.toolkit.lib.network.NetworkServiceSubscription;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -77,7 +78,7 @@ public class NetworkDraft extends Network implements AzResource.Draft<Network, c
         final String addressSpace = this.getAddressSpaces().stream().findFirst().orElse(null);
         final Subnet subnet = this.getSubnets().stream().findFirst().orElse(null);
 
-        final NetworkManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final NetworkManager manager = Objects.requireNonNull(((NetworkServiceSubscription) this.getParent()).getRemote());
         com.azure.resourcemanager.network.models.Network.DefinitionStages.WithCreateAndSubnet create = manager.networks().define(name)
             .withRegion(region.getName())
             .withExistingResourceGroup(this.getResourceGroupName()).withAddressSpace(addressSpace);

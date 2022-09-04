@@ -28,7 +28,7 @@ public class ApplicationInsightDraft extends ApplicationInsight implements AzRes
     private static final String REGION_IS_REQUIRED = "'region' is required to create application insight.";
     private static final String START_CREATING_APPLICATION_INSIGHT = "Start creating Application Insight ({0})...";
     private static final String APPLICATION_INSIGHTS_CREATED = "Application Insight ({0}) is successfully created. " +
-            "You can visit {1} to view your Application Insights component.";
+        "You can visit {1} to view your Application Insights component.";
 
     @Setter
     @Nullable
@@ -63,7 +63,7 @@ public class ApplicationInsightDraft extends ApplicationInsight implements AzRes
         if (Objects.isNull(region)) {
             throw new AzureToolkitRuntimeException(REGION_IS_REQUIRED);
         }
-        final ApplicationInsightsManager applicationInsightsManager = Objects.requireNonNull(this.getParent().getRemote());
+        final ApplicationInsightsManager applicationInsightsManager = Objects.requireNonNull(((ApplicationInsightsServiceSubscription) this.getParent()).getRemote());
         final IAzureMessager messager = AzureMessager.getMessager();
         messager.info(AzureString.format(START_CREATING_APPLICATION_INSIGHT, getName()));
         final ApplicationInsightsComponent result = applicationInsightsManager.components().define(getName())

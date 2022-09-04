@@ -100,7 +100,8 @@ public class SpringCloudAppDraft extends SpringCloudApp implements AzResource.Dr
     )
     public SpringApp createResourceInAzure() {
         final String appName = this.getName();
-        final SpringService service = Objects.requireNonNull(this.getParent().getRemote());
+        final SpringCloudCluster parent = (SpringCloudCluster) this.getParent();
+        final SpringService service = Objects.requireNonNull(parent.getRemote());
         SpringApp.DefinitionStages.Blank blank = service.apps().define(appName);
         final String newActiveDeploymentName = StringUtils.firstNonBlank(this.getActiveDeploymentName(), DEFAULT_DEPLOYMENT_NAME);
         final boolean newPublicEndpointEnabled = this.isPublicEndpointEnabled();
@@ -116,8 +117,8 @@ public class SpringCloudAppDraft extends SpringCloudApp implements AzResource.Dr
         if (!Objects.equals(super.isPublicEndpointEnabled(), newPublicEndpointEnabled) && newPublicEndpointEnabled) {
             create = create.withDefaultPublicEndpoint();
         }
-        if (!this.getParent().isEnterpriseTier() && !Objects.equals(super.isPersistentDiskEnabled(), newPersistentDiskEnabled)) {
-            create = newPersistentDiskEnabled ? (this.getParent().getSku().toLowerCase().startsWith("s") ?
+        if (!parent.isEnterpriseTier() && !Objects.equals(super.isPersistentDiskEnabled(), newPersistentDiskEnabled)) {
+            create = newPersistentDiskEnabled ? (parent.getSku().toLowerCase().startsWith("s") ?
                 create.withPersistentDisk(STANDARD_TIER_DEFAULT_DISK_SIZE, DEFAULT_DISK_MOUNT_PATH) :
                 create.withPersistentDisk(BASIC_TIER_DEFAULT_DISK_SIZE, DEFAULT_DISK_MOUNT_PATH)) :
                 create.withPersistentDisk(0, null);
@@ -143,14 +144,15 @@ public class SpringCloudAppDraft extends SpringCloudApp implements AzResource.Dr
         final boolean newPublicEndpointEnabled = this.isPublicEndpointEnabled();
         final boolean newPersistentDiskEnabled = this.isPersistentDiskEnabled();
 
+        final SpringCloudCluster parent = (SpringCloudCluster) this.getParent();
         boolean modified = !Objects.equals(oldActiveDeploymentName, newActiveDeploymentName) && StringUtils.isNotBlank(newActiveDeploymentName) ||
             !Objects.equals(super.isPublicEndpointEnabled(), newPublicEndpointEnabled) ||
-            !this.getParent().isEnterpriseTier() && !Objects.equals(super.isPersistentDiskEnabled(), newPersistentDiskEnabled);
+            !parent.isEnterpriseTier() && !Objects.equals(super.isPersistentDiskEnabled(), newPersistentDiskEnabled);
 
         SpringApp.Update update = origin.update();
         Optional.ofNullable(newActiveDeploymentName).filter(StringUtils::isNotBlank).ifPresent(update::withActiveDeployment);
         update = newPublicEndpointEnabled ? update.withDefaultPublicEndpoint() : update.withoutDefaultPublicEndpoint();
-        update = newPersistentDiskEnabled ? (this.getParent().getSku().toLowerCase().startsWith("s") ?
+        update = newPersistentDiskEnabled ? (parent.getSku().toLowerCase().startsWith("s") ?
             update.withPersistentDisk(STANDARD_TIER_DEFAULT_DISK_SIZE, DEFAULT_DISK_MOUNT_PATH) :
             update.withPersistentDisk(BASIC_TIER_DEFAULT_DISK_SIZE, DEFAULT_DISK_MOUNT_PATH)) :
             update.withPersistentDisk(0, null);

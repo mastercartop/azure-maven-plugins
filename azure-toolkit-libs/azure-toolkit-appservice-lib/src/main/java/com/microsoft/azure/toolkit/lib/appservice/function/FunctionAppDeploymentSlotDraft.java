@@ -96,7 +96,7 @@ public class FunctionAppDeploymentSlotDraft extends FunctionAppDeploymentSlot
         // Using configuration from parent by default
         final String source = StringUtils.isBlank(newConfigurationSource) ? CONFIGURATION_SOURCE_PARENT : StringUtils.lowerCase(newConfigurationSource);
 
-        final FunctionApp functionApp = Objects.requireNonNull(this.getParent().getFullRemote());
+        final FunctionApp functionApp = Objects.requireNonNull(((com.microsoft.azure.toolkit.lib.appservice.function.FunctionApp) this.getParent()).getFullRemote());
         final FunctionDeploymentSlot.DefinitionStages.Blank blank = functionApp.deploymentSlots().define(getName());
         final FunctionDeploymentSlot.DefinitionStages.WithCreate withCreate;
         if (CONFIGURATION_SOURCE_NEW.equals(source)) {

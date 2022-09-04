@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Getter
-public class SpringCloudApp extends AbstractAzResource<SpringCloudApp, SpringCloudCluster, SpringApp>
+public class SpringCloudApp extends AbstractAzResource<SpringCloudApp, SpringApp>
     implements Startable, Deletable {
 
     @Nonnull
@@ -60,7 +60,7 @@ public class SpringCloudApp extends AbstractAzResource<SpringCloudApp, SpringClo
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, SpringCloudApp, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.singletonList(deploymentModule);
     }
 

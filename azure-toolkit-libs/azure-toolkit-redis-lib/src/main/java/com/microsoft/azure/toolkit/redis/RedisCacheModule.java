@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class RedisCacheModule extends AbstractAzResourceModule<RedisCache, RedisServiceSubscription, com.azure.resourcemanager.redis.models.RedisCache> {
+public class RedisCacheModule extends AbstractAzResourceModule<RedisCache, com.azure.resourcemanager.redis.models.RedisCache> {
 
     public static final String NAME = "Redis";
 
@@ -25,7 +25,7 @@ public class RedisCacheModule extends AbstractAzResourceModule<RedisCache, Redis
 
     @Override
     public RedisCaches getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(RedisManager::redisCaches).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> (RedisManager) r).map(RedisManager::redisCaches).orElse(null);
     }
 
     @Nonnull

@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class PostgreSqlFirewallRule extends AbstractAzResource<PostgreSqlFirewallRule, PostgreSqlServer, FirewallRule> implements IFirewallRule {
+public class PostgreSqlFirewallRule extends AbstractAzResource<PostgreSqlFirewallRule, FirewallRule> implements IFirewallRule {
 
     protected PostgreSqlFirewallRule(@Nonnull String name, @Nonnull PostgreSqlFirewallRuleModule module) {
         super(name, module);
@@ -40,7 +40,7 @@ public class PostgreSqlFirewallRule extends AbstractAzResource<PostgreSqlFirewal
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, PostgreSqlFirewallRule, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

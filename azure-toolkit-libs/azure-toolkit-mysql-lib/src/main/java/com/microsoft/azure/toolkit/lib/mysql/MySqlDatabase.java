@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MySqlDatabase extends AbstractAzResource<MySqlDatabase, MySqlServer, Database> implements IDatabase {
+public class MySqlDatabase extends AbstractAzResource<MySqlDatabase, Database> implements IDatabase {
 
     protected MySqlDatabase(@Nonnull String name, @Nonnull MySqlDatabaseModule module) {
         super(name, module);
@@ -34,7 +34,7 @@ public class MySqlDatabase extends AbstractAzResource<MySqlDatabase, MySqlServer
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, MySqlDatabase, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 
@@ -53,7 +53,7 @@ public class MySqlDatabase extends AbstractAzResource<MySqlDatabase, MySqlServer
     @Nonnull
     @Override
     public MySqlServer getServer() {
-        return this.getParent();
+        return (MySqlServer) this.getParent();
     }
 
     @Nullable
@@ -63,6 +63,6 @@ public class MySqlDatabase extends AbstractAzResource<MySqlDatabase, MySqlServer
 
     @Nonnull
     public JdbcUrl getJdbcUrl() {
-        return JdbcUrl.mysql(this.getParent().getFullyQualifiedDomainName(), this.getName());
+        return JdbcUrl.mysql(this.getServer().getFullyQualifiedDomainName(), this.getName());
     }
 }

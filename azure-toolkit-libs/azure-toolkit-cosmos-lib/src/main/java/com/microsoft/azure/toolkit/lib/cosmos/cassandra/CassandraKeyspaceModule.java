@@ -7,9 +7,9 @@ package com.microsoft.azure.toolkit.lib.cosmos.cassandra;
 
 import com.azure.resourcemanager.cosmos.fluent.CassandraResourcesClient;
 import com.azure.resourcemanager.cosmos.fluent.models.CassandraKeyspaceGetResultsInner;
+import com.azure.resourcemanager.cosmos.models.CosmosDBAccount;
 import com.azure.resourcemanager.resources.fluentcore.arm.ResourceId;
 import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResourceModule;
-import com.microsoft.azure.toolkit.lib.cosmos.CosmosDBAccount;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class CassandraKeyspaceModule extends AbstractAzResourceModule<CassandraKeyspace, CosmosDBAccount, CassandraKeyspaceGetResultsInner> {
+public class CassandraKeyspaceModule extends AbstractAzResourceModule<CassandraKeyspace, CassandraKeyspaceGetResultsInner> {
     private static final String NAME = "cassandraKeyspaces";
 
     public CassandraKeyspaceModule(@NotNull CassandraCosmosDBAccount parent) {
@@ -40,7 +40,7 @@ public class CassandraKeyspaceModule extends AbstractAzResourceModule<CassandraK
     @Override
     protected Stream<CassandraKeyspaceGetResultsInner> loadResourcesFromAzure() {
         return Optional.ofNullable(getClient()).map(client ->
-                client.listCassandraKeyspaces(parent.getResourceGroupName(), parent.getName()).stream()).orElse(Stream.empty());
+            client.listCassandraKeyspaces(parent.getResourceGroupName(), parent.getName()).stream()).orElse(Stream.empty());
     }
 
     @Nullable
@@ -69,6 +69,8 @@ public class CassandraKeyspaceModule extends AbstractAzResourceModule<CassandraK
 
     @Override
     protected CassandraResourcesClient getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(account -> account.manager().serviceClient().getCassandraResources()).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote())
+            .map(r -> ((CosmosDBAccount) r))
+            .map(account -> account.manager().serviceClient().getCassandraResources()).orElse(null);
     }
 }

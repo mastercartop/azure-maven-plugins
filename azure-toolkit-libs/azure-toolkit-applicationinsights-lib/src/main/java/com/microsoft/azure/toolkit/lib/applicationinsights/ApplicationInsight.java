@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class ApplicationInsight extends AbstractAzResource<ApplicationInsight, ApplicationInsightsServiceSubscription, ApplicationInsightsComponent>
+public class ApplicationInsight extends AbstractAzResource<ApplicationInsight, ApplicationInsightsComponent>
         implements Deletable {
     protected ApplicationInsight(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull ApplicationInsightsModule module) {
         super(name, resourceGroupName, module);
@@ -58,7 +58,7 @@ public class ApplicationInsight extends AbstractAzResource<ApplicationInsight, A
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, ApplicationInsight, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

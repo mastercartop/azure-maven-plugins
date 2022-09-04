@@ -44,9 +44,10 @@ public class SqlDatabaseDraft extends SqlDatabase implements
     @NotNull
     @Override
     public SqlDatabaseGetResultsInner createResourceInAzure() {
-        final CosmosDBManagementClient cosmosDBManagementClient = Objects.requireNonNull(getParent().getRemote()).manager().serviceClient();
+        final SqlCosmosDBAccount parent = (SqlCosmosDBAccount) this.getParent();
+        final CosmosDBManagementClient cosmosDBManagementClient = Objects.requireNonNull(parent.getRemote()).manager().serviceClient();
         final SqlDatabaseCreateUpdateParameters parameters = new SqlDatabaseCreateUpdateParameters()
-                .withLocation(Objects.requireNonNull(this.getParent().getRegion()).getName())
+                .withLocation(Objects.requireNonNull(parent.getRegion()).getName())
                 .withResource(new SqlDatabaseResource().withId(this.getName()));
         final Integer throughput = ensureConfig().getThroughput();
         final Integer maxThroughput = ensureConfig().getMaxThroughput();
@@ -61,7 +62,7 @@ public class SqlDatabaseDraft extends SqlDatabase implements
             parameters.withOptions(options);
         }
         AzureMessager.getMessager().info(AzureString.format("Start creating database({0})...", this.getName()));
-        final SqlDatabaseGetResultsInner result = cosmosDBManagementClient.getSqlResources().createUpdateSqlDatabase(this.getResourceGroupName(), this.getParent().getName(),
+        final SqlDatabaseGetResultsInner result = cosmosDBManagementClient.getSqlResources().createUpdateSqlDatabase(this.getResourceGroupName(), parent.getName(),
                 this.getName(), parameters, Context.NONE);
         AzureMessager.getMessager().success(AzureString.format("Database({0}) is successfully created.", this.getName()));
         return result;

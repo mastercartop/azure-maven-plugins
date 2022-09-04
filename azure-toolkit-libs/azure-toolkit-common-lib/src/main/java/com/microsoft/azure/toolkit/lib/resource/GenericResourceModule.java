@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class GenericResourceModule extends
-    AbstractAzResourceModule<GenericResource, ResourceGroup, HasId> {
+    AbstractAzResourceModule<GenericResource, HasId> {
 
     public static final String NAME = "genericResources";
 
@@ -31,7 +31,11 @@ public class GenericResourceModule extends
     @Nullable
     @Override
     public GenericResources getClient() {
-        return Optional.ofNullable(this.parent.getParent().getRemote()).map(ResourceManager::genericResources).orElse(null);
+        return Optional.of(this.parent.getParent())
+            .map(p -> ((AbstractAzResource<?, ?>) p))
+            .map(AbstractAzResource::getRemote)
+            .map(r -> ((ResourceManager) r))
+            .map(ResourceManager::genericResources).orElse(null);
     }
 
     @Nonnull
@@ -60,7 +64,7 @@ public class GenericResourceModule extends
     }
 
     @Nonnull
-    public GenericResource newResource(@Nonnull AbstractAzResource<?, ?, ?> concrete) {
+    public GenericResource newResource(@Nonnull AbstractAzResource<?, ?> concrete) {
         return new GenericResource(concrete, this);
     }
 

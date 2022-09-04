@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class CassandraKeyspace extends AbstractAzResource<CassandraKeyspace, CosmosDBAccount, CassandraKeyspaceGetResultsInner> implements Deletable, ICosmosDatabase {
+public class CassandraKeyspace extends AbstractAzResource<CassandraKeyspace, CassandraKeyspaceGetResultsInner> implements Deletable, ICosmosDatabase {
 
     private final CassandraTableModule containerModule;
 
@@ -39,7 +39,7 @@ public class CassandraKeyspace extends AbstractAzResource<CassandraKeyspace, Cos
 
     @NotNull
     @Override
-    public List<AbstractAzResourceModule<?, CassandraKeyspace, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.singletonList(containerModule);
     }
 

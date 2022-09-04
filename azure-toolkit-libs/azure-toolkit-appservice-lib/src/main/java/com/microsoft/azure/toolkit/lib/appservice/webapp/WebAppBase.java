@@ -13,14 +13,14 @@ import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResourceModule;
 
 import javax.annotation.Nonnull;
 
-public abstract class WebAppBase<T extends WebAppBase<T, P, F>, P extends AbstractAzResource<P, ?, ?>, F extends com.azure.resourcemanager.appservice.models.WebAppBase>
+public abstract class WebAppBase<T extends WebAppBase<T, P, F>, P extends AbstractAzResource<P, ?>, F extends com.azure.resourcemanager.appservice.models.WebAppBase>
     extends AppServiceAppBase<T, P, F> implements IOneDeploy {
 
-    protected WebAppBase(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull AbstractAzResourceModule<T, P, WebSiteBase> module) {
+    protected WebAppBase(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull AbstractAzResourceModule<T, WebSiteBase> module) {
         super(name, resourceGroupName, module);
     }
 
-    protected WebAppBase(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, P, WebSiteBase> module) {
+    protected WebAppBase(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, WebSiteBase> module) {
         super(name, module);
     }
 

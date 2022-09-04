@@ -57,11 +57,11 @@ public class Azure {
 
     @Nullable
     @AzureOperation(name = "resource.get.id", params = {"id"}, type = AzureOperation.Type.SERVICE)
-    public AbstractAzResource<?, ?, ?> getById(String id) {
+    public AbstractAzResource<?, ?> getById(String id) {
         final ResourceId resourceId = ResourceId.fromString(id);
         final String provider = Optional.ofNullable(resourceId.providerNamespace()).orElse("Microsoft.Resources");
         final AzService service = getService(provider);
-        AbstractAzResource<?, ?, ?> result = null;
+        AbstractAzResource<?, ?> result = null;
         if (service instanceof AbstractAzService) {
             result = service.getById(id);
         }
@@ -74,11 +74,11 @@ public class Azure {
 
     @Nullable
     @AzureOperation(name = "resource.get.id", params = {"id"}, type = AzureOperation.Type.SERVICE)
-    public AbstractAzResource<?, ?, ?> getOrInitById(String id) {
+    public AbstractAzResource<?, ?> getOrInitById(String id) {
         final ResourceId resourceId = ResourceId.fromString(id);
         final String provider = Optional.ofNullable(resourceId.providerNamespace()).orElse("Microsoft.Resources");
         final AzService service = getService(provider);
-        AbstractAzResource<?, ?, ?> result = null;
+        AbstractAzResource<?, ?> result = null;
         if (service instanceof AbstractAzService) {
             result = service.getOrInitById(id);
         }

@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class SqlContainerModule extends AbstractAzResourceModule<SqlContainer, SqlDatabase, SqlContainerGetResultsInner> {
+public class SqlContainerModule extends AbstractAzResourceModule<SqlContainer, SqlContainerGetResultsInner> {
     private static final String NAME = "containers";
 
     public SqlContainerModule(@NotNull SqlDatabase parent) {

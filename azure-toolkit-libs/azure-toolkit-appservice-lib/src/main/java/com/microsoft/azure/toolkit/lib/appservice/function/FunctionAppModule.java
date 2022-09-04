@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
-public class FunctionAppModule extends AbstractAzResourceModule<FunctionApp, AppServiceServiceSubscription, WebSiteBase> {
+public class FunctionAppModule extends AbstractAzResourceModule<FunctionApp, WebSiteBase> {
 
     public static final String NAME = "sites";
 
@@ -33,7 +33,7 @@ public class FunctionAppModule extends AbstractAzResourceModule<FunctionApp, App
 
     @Override
     public FunctionApps getClient() {
-        return Optional.ofNullable(this.parent.getRemote()).map(AppServiceManager::functionApps).orElse(null);
+        return Optional.ofNullable(this.parent.getRemote()).map(r -> ((AppServiceManager) r)).map(AppServiceManager::functionApps).orElse(null);
     }
 
     @Nonnull

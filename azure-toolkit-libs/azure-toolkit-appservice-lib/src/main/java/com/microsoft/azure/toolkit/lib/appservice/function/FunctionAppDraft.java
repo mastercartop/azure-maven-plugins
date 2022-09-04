@@ -9,6 +9,7 @@ import com.azure.resourcemanager.appservice.AppServiceManager;
 import com.azure.resourcemanager.appservice.models.FunctionApp.DefinitionStages;
 import com.azure.resourcemanager.appservice.models.FunctionApp.Update;
 import com.azure.resourcemanager.appservice.models.WebSiteBase;
+import com.microsoft.azure.toolkit.lib.appservice.AppServiceServiceSubscription;
 import com.microsoft.azure.toolkit.lib.appservice.model.DiagnosticConfig;
 import com.microsoft.azure.toolkit.lib.appservice.model.DockerConfiguration;
 import com.microsoft.azure.toolkit.lib.appservice.model.JavaVersion;
@@ -103,7 +104,7 @@ public class FunctionAppDraft extends FunctionApp implements AzResource.Draft<Fu
         final DiagnosticConfig newDiagnosticConfig = getDiagnosticConfig();
         final String funcExtVersion = Optional.ofNullable(newAppSettings).map(map -> map.get(FUNCTIONS_EXTENSION_VERSION)).orElse(null);
 
-        final AppServiceManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final AppServiceManager manager = Objects.requireNonNull(((AppServiceServiceSubscription) this.getParent()).getRemote());
         final DefinitionStages.Blank blank = manager.functionApps().define(name);
         final DefinitionStages.WithCreate withCreate;
         if (newRuntime.getOperatingSystem() == OperatingSystem.LINUX) {

@@ -15,6 +15,7 @@ import com.microsoft.azure.toolkit.lib.common.model.AzResource;
 import com.microsoft.azure.toolkit.lib.common.model.Region;
 import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 import com.microsoft.azure.toolkit.lib.common.utils.Utils;
+import com.microsoft.azure.toolkit.lib.network.NetworkServiceSubscription;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -65,7 +66,7 @@ public class PublicIpAddressDraft extends PublicIpAddress implements AzResource.
         final String name = this.getName();
         final Region region = Objects.requireNonNull(this.getRegion(), "'region' is required to create a Public IP address");
 
-        final NetworkManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final NetworkManager manager = Objects.requireNonNull(((NetworkServiceSubscription) this.getParent()).getRemote());
         final DefinitionStages.WithCreate create = manager.publicIpAddresses().define(name)
             .withRegion(region.getName())
             .withExistingResourceGroup(this.getResourceGroupName())

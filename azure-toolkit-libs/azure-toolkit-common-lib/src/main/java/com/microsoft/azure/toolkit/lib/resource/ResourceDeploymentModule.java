@@ -8,6 +8,7 @@ package com.microsoft.azure.toolkit.lib.resource;
 import com.azure.resourcemanager.resources.ResourceManager;
 import com.azure.resourcemanager.resources.models.Deployment;
 import com.azure.resourcemanager.resources.models.Deployments;
+import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResource;
 import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResourceModule;
 import com.microsoft.azure.toolkit.lib.common.model.AzResource;
 import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
@@ -20,7 +21,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ResourceDeploymentModule extends
-    AbstractAzResourceModule<ResourceDeployment, ResourceGroup, Deployment> {
+    AbstractAzResourceModule<ResourceDeployment, Deployment> {
 
     public static final String NAME = "deployments";
 
@@ -31,7 +32,11 @@ public class ResourceDeploymentModule extends
     @Nullable
     @Override
     public Deployments getClient() {
-        return Optional.ofNullable(this.parent.getParent().getRemote()).map(ResourceManager::deployments).orElse(null);
+        return Optional.of(this.parent.getParent())
+            .map(p -> ((AbstractAzResource<?, ?>) p))
+            .map(AbstractAzResource::getRemote)
+            .map(r -> ((ResourceManager) r))
+            .map(ResourceManager::deployments).orElse(null);
     }
 
     @Nonnull

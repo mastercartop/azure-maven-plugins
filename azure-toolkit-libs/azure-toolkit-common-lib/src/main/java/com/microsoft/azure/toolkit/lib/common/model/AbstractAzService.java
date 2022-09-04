@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public abstract class AbstractAzService<T extends AbstractAzServiceSubscription<T, R>, R> extends AbstractAzResourceModule<T, AzResource.None, R>
+public abstract class AbstractAzService<T extends AbstractAzServiceSubscription<T, R>, R> extends AbstractAzResourceModule<T, R>
     implements AzService {
 
     public AbstractAzService(@Nonnull String name) {
@@ -59,7 +59,7 @@ public abstract class AbstractAzService<T extends AbstractAzServiceSubscription<
     }
 
     @AzureOperation(name = "resource.preload.type", params = {"module.getResourceTypeName()"}, type = AzureOperation.Type.ACTION)
-    private static void preload(AzResourceModule<?, ?, ?> module) {
+    private static void preload(AzResourceModule<?, ?> module) {
         OperationContext.action().setTelemetryProperty("preloading", String.valueOf(true));
         module.list();
     }
@@ -92,7 +92,7 @@ public abstract class AbstractAzService<T extends AbstractAzServiceSubscription<
     protected <E> E doGetById(@Nonnull String id) {
         ResourceId resourceId = ResourceId.fromString(id);
         final String resourceGroup = resourceId.resourceGroupName();
-        AbstractAzResource<?, ?, ?> resource = Objects.requireNonNull(this.get(resourceId.subscriptionId(), resourceGroup));
+        AbstractAzResource<?, ?> resource = Objects.requireNonNull(this.get(resourceId.subscriptionId(), resourceGroup));
         final LinkedList<Pair<String, String>> resourceTypeNames = new LinkedList<>();
         while (resourceId != null) {
             resourceTypeNames.push(Pair.of(resourceId.resourceType(), resourceId.name()));
@@ -115,7 +115,7 @@ public abstract class AbstractAzService<T extends AbstractAzServiceSubscription<
     protected <E> E doGetOrInitById(@Nonnull String id) {
         ResourceId resourceId = ResourceId.fromString(id);
         final String resourceGroup = resourceId.resourceGroupName();
-        AbstractAzResource<?, ?, ?> resource = Objects.requireNonNull(this.get(resourceId.subscriptionId(), resourceGroup));
+        AbstractAzResource<?, ?> resource = Objects.requireNonNull(this.get(resourceId.subscriptionId(), resourceGroup));
         final LinkedList<Pair<String, String>> resourceTypeNames = new LinkedList<>();
         while (resourceId != null) {
             resourceTypeNames.push(Pair.of(resourceId.resourceType(), resourceId.name()));

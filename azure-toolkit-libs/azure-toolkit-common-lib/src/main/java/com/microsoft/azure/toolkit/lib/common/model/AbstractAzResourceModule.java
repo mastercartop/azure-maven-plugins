@@ -58,8 +58,8 @@ import static com.microsoft.azure.toolkit.lib.common.model.AzResource.RESOURCE_G
 @RequiredArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public abstract class AbstractAzResourceModule<T extends AbstractAzResource<T, P, R>, P extends AbstractAzResource<P, ?, ?>, R>
-    implements AzResourceModule<T, P, R> {
+public abstract class AbstractAzResourceModule<T extends AbstractAzResource<T, R>, R>
+    implements AzResourceModule<T, R> {
     @Getter
     @Nonnull
     @ToString.Include
@@ -68,7 +68,7 @@ public abstract class AbstractAzResourceModule<T extends AbstractAzResource<T, P
     @Getter
     @Nonnull
     @EqualsAndHashCode.Include
-    protected final P parent;
+    protected final AbstractAzResource<?, ?> parent;
     @Nonnull
     @ToString.Include
     private final AtomicLong syncTimeRef = new AtomicLong(-1);
@@ -331,7 +331,7 @@ public abstract class AbstractAzResourceModule<T extends AbstractAzResource<T, P
                 final GenericResourceModule genericResourceModule = resourceGroup.genericResources();
                 final GenericResource genericResource = genericResourceModule.newResource(resource);
                 //noinspection unchecked,rawtypes
-                ((AbstractAzResourceModule) genericResourceModule).addResourceToLocal(resource.getId(), genericResource);
+                genericResourceModule.addResourceToLocal(resource.getId(), genericResource);
             }
             log.debug("[{}]:create->doModify(draft.createResourceInAzure({}))", this.name, resource);
             try {
@@ -407,7 +407,7 @@ public abstract class AbstractAzResourceModule<T extends AbstractAzResource<T, P
     private void fireChildrenChangedEvent() {
         log.debug("[{}]:fireChildrenChangedEvent()", this.name);
         if (this.getParent() instanceof AbstractAzServiceSubscription) {
-            final AzResourceModule<P, ?, ?> service = this.getParent().getModule();
+            final AzResourceModule<?, ?> service = this.getParent().getModule();
             AzureEventBus.emit("service.children_changed.service", service);
         }
         if (this instanceof AzService) {

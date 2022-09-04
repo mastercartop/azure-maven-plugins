@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class MongoCollectionModule extends AbstractAzResourceModule<MongoCollection, MongoDatabase, MongoDBCollectionGetResultsInner> {
+public class MongoCollectionModule extends AbstractAzResourceModule<MongoCollection, MongoDBCollectionGetResultsInner> {
     private static final String NAME = "collections";
 
     public MongoCollectionModule(@NotNull MongoDatabase parent) {

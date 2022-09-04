@@ -50,8 +50,8 @@ public class MySqlFirewallRuleDraft extends MySqlFirewallRule implements AzResou
         type = AzureOperation.Type.SERVICE
     )
     public FirewallRule createResourceInAzure() {
-        final MySqlServer server = this.getParent();
-        final MySqlManager manager = Objects.requireNonNull(server.getParent().getRemote());
+        final MySqlServer server = (MySqlServer) this.getParent();
+        final MySqlManager manager = Objects.requireNonNull(((MySqlServiceSubscription) server.getParent()).getRemote());
         final FirewallRule.DefinitionStages.WithCreate withCreate = manager.firewallRules().define(this.getName())
             .withExistingServer(this.getResourceGroupName(), server.getName())
             .withStartIpAddress(this.getStartIpAddress())
@@ -74,8 +74,8 @@ public class MySqlFirewallRuleDraft extends MySqlFirewallRule implements AzResou
         final Optional<String> modifiedStartIp = Optional.ofNullable(this.getStartIpAddress()).filter(n -> !Objects.equals(n, super.getStartIpAddress()));
         final Optional<String> modifiedEndIp = Optional.ofNullable(this.getEndIpAddress()).filter(n -> !Objects.equals(n, super.getEndIpAddress()));
         if (modifiedStartIp.isPresent() || modifiedEndIp.isPresent()) {
-            final MySqlServer server = this.getParent();
-            final MySqlManager manager = Objects.requireNonNull(server.getParent().getRemote());
+            final MySqlServer server = (MySqlServer) this.getParent();
+            final MySqlManager manager = Objects.requireNonNull(((MySqlServiceSubscription) server.getParent()).getRemote());
             final FirewallRule.Update update = manager.firewallRules().get(this.getResourceGroupName(), server.getName(), this.getName()).update();
             modifiedStartIp.ifPresent(update::withStartIpAddress);
             modifiedEndIp.ifPresent(update::withEndIpAddress);

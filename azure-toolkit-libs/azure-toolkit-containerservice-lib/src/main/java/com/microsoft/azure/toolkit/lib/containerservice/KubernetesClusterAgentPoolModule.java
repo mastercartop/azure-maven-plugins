@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class KubernetesClusterAgentPoolModule extends
-        AbstractAzResourceModule<KubernetesClusterAgentPool, KubernetesCluster, com.azure.resourcemanager.containerservice.models.KubernetesClusterAgentPool> {
+        AbstractAzResourceModule<KubernetesClusterAgentPool, com.azure.resourcemanager.containerservice.models.KubernetesClusterAgentPool> {
 
     private static final String NAME = "agentPools";
 
@@ -63,6 +63,6 @@ public class KubernetesClusterAgentPoolModule extends
     @Nullable
     @Override
     protected com.azure.resourcemanager.containerservice.models.KubernetesCluster getClient() {
-        return this.parent.getRemote();
+        return (com.azure.resourcemanager.containerservice.models.KubernetesCluster) this.parent.getRemote();
     }
 }

@@ -75,7 +75,7 @@ public class ContainerRegistryDraft extends ContainerRegistry implements AzResou
         if (ObjectUtils.anyNull(region, sku)) {
             throw new AzureToolkitRuntimeException(REGION_AND_SKU_IS_REQUIRED);
         }
-        final Registries registries = Objects.requireNonNull(this.getParent().getAzureContainerRegistryModule().getClient());
+        final Registries registries = Objects.requireNonNull(((AzureContainerRegistryServiceSubscription) this.getParent()).getAzureContainerRegistryModule().getClient());
         final Registry.DefinitionStages.WithSku withSku = registries.define(this.getName())
                 .withRegion(region.getName())
                 .withExistingResourceGroup(this.getResourceGroupName());

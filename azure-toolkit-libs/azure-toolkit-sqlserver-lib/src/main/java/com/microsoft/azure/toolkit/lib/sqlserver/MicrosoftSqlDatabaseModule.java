@@ -9,6 +9,7 @@ import com.azure.resourcemanager.resources.fluentcore.arm.ResourceId;
 import com.azure.resourcemanager.sql.models.SqlDatabase;
 import com.azure.resourcemanager.sql.models.SqlDatabaseOperations;
 import com.azure.resourcemanager.sql.models.SqlServer;
+import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResource;
 import com.microsoft.azure.toolkit.lib.common.model.AbstractAzResourceModule;
 import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 
@@ -17,7 +18,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class MicrosoftSqlDatabaseModule extends AbstractAzResourceModule<MicrosoftSqlDatabase, MicrosoftSqlServer, SqlDatabase> {
+public class MicrosoftSqlDatabaseModule extends AbstractAzResourceModule<MicrosoftSqlDatabase, SqlDatabase> {
     public static final String NAME = "databases";
 
     public MicrosoftSqlDatabaseModule(@Nonnull MicrosoftSqlServer parent) {
@@ -65,7 +66,11 @@ public class MicrosoftSqlDatabaseModule extends AbstractAzResourceModule<Microso
     @Nullable
     @Override
     protected SqlDatabaseOperations.SqlDatabaseActionsDefinition getClient() {
-        return Optional.ofNullable(this.getParent().getRemote()).map(SqlServer::databases).orElse(null);
+        return Optional.of(this.getParent().getParent())
+            .map(p -> ((AbstractAzResource<?, ?>) p))
+            .map(AbstractAzResource::getRemote)
+            .map(r -> ((SqlServer) r))
+            .map(SqlServer::databases).orElse(null);
     }
 
     @Nonnull

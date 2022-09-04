@@ -35,9 +35,9 @@ import java.util.stream.Collectors;
 
 import static com.microsoft.azure.toolkit.lib.Azure.az;
 
-public abstract class AbstractAzServiceSubscription<T extends AbstractAzResource<T, AzResource.None, R>, R>
-    extends AbstractAzResource<T, AzResource.None, R> {
-    protected AbstractAzServiceSubscription(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, None, R> module) {
+public abstract class AbstractAzServiceSubscription<T extends AbstractAzResource<T, R>, R>
+    extends AbstractAzResource<T, R> {
+    protected AbstractAzServiceSubscription(@Nonnull String name, @Nonnull AbstractAzResourceModule<T, R> module) {
         super(name, AzResource.RESOURCE_GROUP_PLACEHOLDER, module);
     }
 

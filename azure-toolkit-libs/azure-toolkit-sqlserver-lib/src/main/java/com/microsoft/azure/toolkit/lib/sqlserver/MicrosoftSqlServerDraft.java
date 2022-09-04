@@ -63,7 +63,7 @@ public class MicrosoftSqlServerDraft extends MicrosoftSqlServer implements AzRes
     )
     public SqlServer createResourceInAzure() {
         assert this.config != null;
-        final SqlServerManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final SqlServerManager manager = Objects.requireNonNull(((MicrosoftSqlServiceSubscription) this.getParent()).getRemote());
         final SqlServer.DefinitionStages.WithCreate create = manager.sqlServers()
             .define(this.getName())
             .withRegion(Objects.requireNonNull(this.getRegion(), "'region' is required to create Sql server").getName())

@@ -7,6 +7,7 @@ package com.microsoft.azure.toolkit.lib.springcloud.config;
 
 import com.azure.resourcemanager.appplatform.models.DeploymentInstance;
 import com.microsoft.azure.toolkit.lib.common.model.IArtifact;
+import com.microsoft.azure.toolkit.lib.springcloud.SpringCloudApp;
 import com.microsoft.azure.toolkit.lib.springcloud.SpringCloudDeployment;
 import com.microsoft.azure.toolkit.lib.springcloud.SpringCloudDeploymentDraft;
 import com.microsoft.azure.toolkit.lib.springcloud.model.SpringCloudPersistentDisk;
@@ -78,7 +79,7 @@ public class SpringCloudDeploymentConfig {
             return null;
         }
         final List<DeploymentInstance> instances = deployment.getInstances();
-        final SpringCloudPersistentDisk disk = deployment.getParent().getPersistentDisk();
+        final SpringCloudPersistentDisk disk = ((SpringCloudApp) deployment.getParent()).getPersistentDisk();
         final SpringCloudDeploymentConfig deploymentConfig = SpringCloudDeploymentConfig.builder().build();
         deploymentConfig.setRuntimeVersion(deployment.getRuntimeVersion());
         deploymentConfig.setEnablePersistentStorage(Objects.nonNull(disk) && disk.getSizeInGB() > 0);

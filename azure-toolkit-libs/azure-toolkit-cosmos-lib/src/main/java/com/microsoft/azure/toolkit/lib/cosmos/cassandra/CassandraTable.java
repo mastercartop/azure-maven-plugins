@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class CassandraTable extends AbstractAzResource<CassandraTable, CassandraKeyspace, CassandraTableGetResultsInner> implements Deletable, ICosmosCollection {
+public class CassandraTable extends AbstractAzResource<CassandraTable, CassandraTableGetResultsInner> implements Deletable, ICosmosCollection {
 
     protected CassandraTable(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull CassandraTableModule module) {
         super(name, resourceGroupName, module);
@@ -32,7 +32,7 @@ public class CassandraTable extends AbstractAzResource<CassandraTable, Cassandra
 
     @NotNull
     @Override
-    public List<AbstractAzResourceModule<?, CassandraTable, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class KubernetesCluster extends AbstractAzResource<KubernetesCluster, ContainerServiceSubscription,
+public class KubernetesCluster extends AbstractAzResource<KubernetesCluster,
         com.azure.resourcemanager.containerservice.models.KubernetesCluster> implements Startable, Deletable {
 
     private final KubernetesClusterAgentPoolModule agentPoolModule;
@@ -70,7 +70,7 @@ public class KubernetesCluster extends AbstractAzResource<KubernetesCluster, Con
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, KubernetesCluster, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.singletonList(agentPoolModule);
     }
 

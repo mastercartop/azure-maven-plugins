@@ -17,7 +17,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
-public class MicrosoftSqlDatabase extends AbstractAzResource<MicrosoftSqlDatabase, MicrosoftSqlServer, SqlDatabase> implements IDatabase {
+public class MicrosoftSqlDatabase extends AbstractAzResource<MicrosoftSqlDatabase, SqlDatabase> implements IDatabase {
 
     protected MicrosoftSqlDatabase(@Nonnull String name, @Nonnull MicrosoftSqlDatabaseModule module) {
         super(name, module);
@@ -29,7 +29,7 @@ public class MicrosoftSqlDatabase extends AbstractAzResource<MicrosoftSqlDatabas
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, MicrosoftSqlDatabase, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 
@@ -42,7 +42,7 @@ public class MicrosoftSqlDatabase extends AbstractAzResource<MicrosoftSqlDatabas
     @Nonnull
     @Override
     public MicrosoftSqlServer getServer() {
-        return this.getParent();
+        return (MicrosoftSqlServer) this.getParent();
     }
 
     @Nullable
@@ -58,6 +58,6 @@ public class MicrosoftSqlDatabase extends AbstractAzResource<MicrosoftSqlDatabas
 
     @Nonnull
     public JdbcUrl getJdbcUrl() {
-        return JdbcUrl.sqlserver(this.getParent().getFullyQualifiedDomainName(), this.getName());
+        return JdbcUrl.sqlserver(this.getServer().getFullyQualifiedDomainName(), this.getName());
     }
 }

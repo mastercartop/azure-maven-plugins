@@ -22,6 +22,7 @@ import com.microsoft.azure.toolkit.lib.common.model.AzResource;
 import com.microsoft.azure.toolkit.lib.common.model.Region;
 import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 import com.microsoft.azure.toolkit.lib.common.utils.Utils;
+import com.microsoft.azure.toolkit.lib.network.NetworkServiceSubscription;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -77,7 +78,7 @@ public class NetworkSecurityGroupDraft extends NetworkSecurityGroup implements A
         final Region region = Objects.requireNonNull(this.getRegion(), "'region' is required to create a Network security group");
         final List<SecurityRule> securityRules = this.getSecurityRules();
 
-        final NetworkManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final NetworkManager manager = Objects.requireNonNull(((NetworkServiceSubscription) this.getParent()).getRemote());
         final DefinitionStages.WithCreate create = manager.networkSecurityGroups().define(name)
             .withRegion(region.getName())
             .withExistingResourceGroup(this.getResourceGroupName());

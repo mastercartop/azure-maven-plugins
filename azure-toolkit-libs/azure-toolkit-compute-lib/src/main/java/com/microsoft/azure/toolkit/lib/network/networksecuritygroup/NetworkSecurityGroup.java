@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class NetworkSecurityGroup extends AbstractAzResource<NetworkSecurityGroup, NetworkServiceSubscription, com.azure.resourcemanager.network.models.NetworkSecurityGroup> {
+public class NetworkSecurityGroup extends AbstractAzResource<NetworkSecurityGroup, com.azure.resourcemanager.network.models.NetworkSecurityGroup> {
 
     protected NetworkSecurityGroup(@Nonnull String name, @Nonnull String resourceGroupName, @Nonnull NetworkSecurityGroupModule module) {
         super(name, resourceGroupName, module);
@@ -34,7 +34,7 @@ public class NetworkSecurityGroup extends AbstractAzResource<NetworkSecurityGrou
 
     @Nonnull
     @Override
-    public List<AbstractAzResourceModule<?, NetworkSecurityGroup, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 

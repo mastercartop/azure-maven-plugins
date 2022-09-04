@@ -9,6 +9,7 @@ import com.azure.resourcemanager.appservice.AppServiceManager;
 import com.azure.resourcemanager.appservice.models.AppServicePlan.DefinitionStages;
 import com.azure.resourcemanager.appservice.models.AppServicePlan.Update;
 import com.microsoft.azure.toolkit.lib.Azure;
+import com.microsoft.azure.toolkit.lib.appservice.AppServiceServiceSubscription;
 import com.microsoft.azure.toolkit.lib.appservice.config.AppServicePlanConfig;
 import com.microsoft.azure.toolkit.lib.appservice.model.OperatingSystem;
 import com.microsoft.azure.toolkit.lib.appservice.model.PricingTier;
@@ -99,7 +100,7 @@ public class AppServicePlanDraft extends AppServicePlan implements
         final Region newRegion = Objects.requireNonNull(this.getRegion(), "'region' is required to create App Service plan.");
 
         Optional.ofNullable(this.getResourceGroup()).filter(AbstractAzResource::isDraftForCreating).ifPresent(rg -> ((ResourceGroupDraft) rg).createIfNotExist());
-        final AppServiceManager manager = Objects.requireNonNull(this.getParent().getRemote());
+        final AppServiceManager manager = Objects.requireNonNull(((AppServiceServiceSubscription) this.getParent()).getRemote());
         final DefinitionStages.WithCreate withCreate = manager.appServicePlans().define(name)
             .withRegion(newRegion.getName())
             .withExistingResourceGroup(this.getResourceGroupName())

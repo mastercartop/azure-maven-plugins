@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CosmosDBAccount extends AbstractAzResource<CosmosDBAccount, CosmosServiceSubscription,
+public class CosmosDBAccount extends AbstractAzResource<CosmosDBAccount,
         com.azure.resourcemanager.cosmos.models.CosmosDBAccount> implements Deletable {
 
     private DatabaseAccountKeys databaseAccountKeys;
@@ -60,7 +60,7 @@ public class CosmosDBAccount extends AbstractAzResource<CosmosDBAccount, CosmosS
 
     @NotNull
     @Override
-    public List<AbstractAzResourceModule<?, CosmosDBAccount, ?>> getSubModules() {
+    public List<AbstractAzResourceModule<?, ?>> getSubModules() {
         return Collections.emptyList();
     }
 
