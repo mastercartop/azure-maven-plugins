@@ -10,6 +10,7 @@ import com.azure.resourcemanager.resources.fluentcore.arm.ResourceId;
 import com.azure.resourcemanager.resources.fluentcore.arm.collection.SupportsGettingById;
 import com.azure.resourcemanager.resources.fluentcore.arm.collection.SupportsGettingByName;
 import com.azure.resourcemanager.resources.fluentcore.arm.collection.SupportsGettingByResourceGroup;
+import com.azure.resourcemanager.resources.fluentcore.arm.models.HasId;
 import com.azure.resourcemanager.resources.fluentcore.collection.SupportsDeletingById;
 import com.azure.resourcemanager.resources.fluentcore.collection.SupportsListing;
 import com.google.common.collect.Sets;
@@ -23,7 +24,6 @@ import com.microsoft.azure.toolkit.lib.common.operation.AzureOperation;
 import com.microsoft.azure.toolkit.lib.common.task.AzureTaskManager;
 import com.microsoft.azure.toolkit.lib.common.utils.Debouncer;
 import com.microsoft.azure.toolkit.lib.common.utils.TailingDebouncer;
-import com.microsoft.azure.toolkit.lib.resource.GenericResource;
 import com.microsoft.azure.toolkit.lib.resource.GenericResourceModule;
 import com.microsoft.azure.toolkit.lib.resource.ResourceGroup;
 import com.microsoft.azure.toolkit.lib.resource.ResourceGroupModule;
@@ -132,7 +132,7 @@ public abstract class AbstractAzResourceModule<T extends AbstractAzResource<T, P
         try {
             log.debug("[{}]:reloadResources->loadResourcesFromAzure()", this.name);
             final Map<String, R> loadedResources = this.loadResourcesFromAzure()
-                .collect(Collectors.toMap(r -> this.newResource(r).getId().toLowerCase(), r -> r));
+                .collect(Collectors.toMap(this::getResourceId, r -> r));
             log.debug("[{}]:reloadResources->setResources(xxx)", this.name);
             this.setResources(loadedResources);
         } catch (Exception e) {
@@ -329,9 +329,8 @@ public abstract class AbstractAzResourceModule<T extends AbstractAzResource<T, P
             final ResourceGroup resourceGroup = resource.getResourceGroup();
             if (Objects.isNull(id.parent()) && Objects.nonNull(resourceGroup) && !(resource instanceof ResourceGroup)) {
                 final GenericResourceModule genericResourceModule = resourceGroup.genericResources();
-                final GenericResource genericResource = genericResourceModule.newResource(resource);
-                //noinspection unchecked,rawtypes
-                ((AbstractAzResourceModule) genericResourceModule).addResourceToLocal(resource.getId(), genericResource);
+                //noinspection unchecked
+                genericResourceModule.addResourceToLocal(resource.getId(), resource);
             }
             log.debug("[{}]:create->doModify(draft.createResourceInAzure({}))", this.name, resource);
             try {
@@ -370,6 +369,14 @@ public abstract class AbstractAzResourceModule<T extends AbstractAzResource<T, P
             return resource;
         }
         throw new AzureToolkitRuntimeException(String.format("resource \"%s\" doesn't exist", draft.getName()));
+    }
+
+    @Nonnull
+    protected String getResourceId(R r) {
+        if (r instanceof HasId) {
+            return ((HasId) r).id();
+        }
+        return this.newResource(r).getId().toLowerCase();
     }
 
     @Nonnull

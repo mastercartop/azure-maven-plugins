@@ -10,6 +10,7 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.profile.AzureProfile;
 import com.azure.resourcemanager.appservice.AppServiceManager;
 import com.azure.resourcemanager.resources.fluentcore.arm.ResourceId;
+import com.azure.resourcemanager.resources.models.GenericResource;
 import com.microsoft.azure.toolkit.lib.Azure;
 import com.microsoft.azure.toolkit.lib.AzureConfiguration;
 import com.microsoft.azure.toolkit.lib.appservice.function.AzureFunctions;
@@ -20,8 +21,6 @@ import com.microsoft.azure.toolkit.lib.auth.Account;
 import com.microsoft.azure.toolkit.lib.auth.AzureAccount;
 import com.microsoft.azure.toolkit.lib.common.model.AbstractAzService;
 import com.microsoft.azure.toolkit.lib.common.model.AbstractAzServiceSubscription;
-import com.microsoft.azure.toolkit.lib.resource.AzureResources;
-import com.microsoft.azure.toolkit.lib.resource.GenericResource;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -83,9 +82,9 @@ public class AzureAppService extends AbstractAzService<AppServiceServiceSubscrip
         } else {
             boolean isFunctionRelated = false;
             try {
-                final GenericResource resource = Azure.az(AzureResources.class).getGenericResource(id);
+                final GenericResource resource = this.get(resourceId.subscriptionId(), null).getResourceManager().genericResources().getById(id);
                 isFunctionRelated = Optional.ofNullable(resource)
-                    .filter(r -> StringUtils.containsIgnoreCase(r.getKind(), "function")).isPresent();
+                    .filter(r -> StringUtils.containsIgnoreCase(r.kind(), "function")).isPresent();
             } catch (ManagementException e) {
                 if (e.getResponse().getStatusCode() != 404) { // Java SDK throw exception with 200 response, swallow exception in this case
                     throw e;
@@ -108,9 +107,9 @@ public class AzureAppService extends AbstractAzService<AppServiceServiceSubscrip
         } else {
             boolean isFunctionRelated = false;
             try {
-                final GenericResource resource = Azure.az(AzureResources.class).getGenericResource(id);
+                final GenericResource resource = this.get(resourceId.subscriptionId(), null).getResourceManager().genericResources().getById(id);
                 isFunctionRelated = Optional.ofNullable(resource)
-                    .filter(r -> StringUtils.containsIgnoreCase(r.getKind(), "function")).isPresent();
+                    .filter(r -> StringUtils.containsIgnoreCase(r.kind(), "function")).isPresent();
             } catch (ManagementException e) {
                 if (e.getResponse().getStatusCode() != 404) { // Java SDK throw exception with 200 response, swallow exception in this case
                     throw e;
