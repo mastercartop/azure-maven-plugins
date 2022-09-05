@@ -190,8 +190,8 @@ public abstract class Account implements IAccount {
             throw new AzureToolkitRuntimeException("No subscriptions are selected. You must select at least one subscription.", IAccountActions.SELECT_SUBS);
         }
         final Set<String> selected = selectedSubscriptionIds.stream().map(String::toLowerCase).collect(Collectors.toSet());
-        this.getSubscriptions().forEach(s -> s.setSelected(false));
-        this.getSubscriptions().stream()
+        this.subscriptions.forEach(s -> s.setSelected(false));
+        this.subscriptions.stream()
             .filter(s -> selected.contains(s.getId().toLowerCase()))
             .forEach(s -> s.setSelected(true));
         this.config.setSelectedSubscriptions(selectedSubscriptionIds);
